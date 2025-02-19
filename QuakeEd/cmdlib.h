@@ -3,7 +3,9 @@
 #ifndef __CMDLIB__
 #define __CMDLIB__
 
-#include <libc.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <ctype.h>
 
@@ -56,7 +58,8 @@ float	LittleFloat (float l);
 
 extern	char		com_token[1024];
 extern	boolean		com_eof;
-
+
+
 char *COM_Parse (char *data);
 
 #endif

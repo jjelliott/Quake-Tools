@@ -1,5 +1,5 @@
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 #include <sys/stat.h>
 
 #define BASEPATHKEY		"basepath"

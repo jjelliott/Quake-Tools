@@ -1,4 +1,4 @@
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 #import "SetBrush.h"
 #import "EditWindow.h"
 

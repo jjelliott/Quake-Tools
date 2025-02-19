@@ -1,7 +1,12 @@
 // cmdlib.c
 
 #include "cmdlib.h"
-
+#include <sys/time.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>   // For open() and its flags (O_* constants)
+#include <sys/stat.h> // For file permission constants (S_* constants)
 #define PATHSEPERATOR   '/'
 
 
@@ -136,7 +141,7 @@ int filelength (int handle)
 
 int tell (int handle)
 {
-	return lseek (handle, 0, L_INCR);
+	return lseek (handle, 0, SEEK_CUR);
 }
 
 char *strupr (char *start)

@@ -24,7 +24,13 @@ QuakeEd_RESOURCE_FILES = i_quakeed.tiff QuakeEd.nib DownArrow.tiff i_90d.tiff \
                          UpArrow.tiff
 
 # Linking against GNUstep libraries
-QuakeEd_LIBS = -lgnustep-gui -lgnustep-base
+QuakeEd_LIBS = -lgnustep-gui -lgnustep-base -lcairo
+
+# Add the Cairo include path
+CFLAGS += -I/usr/include/cairo  # Path to Cairo headers
+
+# Add the Cairo library path (if needed)
+LDFLAGS += -L/usr/lib/x86_64-linux-gnu  # Path to Cairo libraries
 
 # Installation path
 APP_INSTALL_DIR = $(GNUSTEP_LOCAL_APPS)

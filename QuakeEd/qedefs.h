@@ -1,5 +1,5 @@
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 #import <ctype.h>
 #import <sys/types.h>
 #import <sys/dir.h>

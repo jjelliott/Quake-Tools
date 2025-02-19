@@ -29,44 +29,45 @@
  * Note: the associated file is a .m file because it pulls in some .h files
  * which reference objective C methods. 
  */
+#import <Foundation/Foundation.h>
+#include <cairo/cairo.h>  // For Cairo drawing
 
-#import <objc/objc.h>
-#import <dpsclient/dpsclient.h>
+// Use a class instead of a struct for better memory management and encapsulation
+@interface UserPath : NSObject
 
-typedef struct _UP {
-    float          *points;
-    int             numberOfPoints;
-    char           *ops;
-    NXPoint         cp;
-    int             numberOfOps;
-    int             max;
-    float           bbox[4];
-    int             opForUserPath;
-    BOOL            ping;
-} UserPath;
+@property (nonatomic, strong) NSMutableArray<NSValue *> *points;  // Store points as NSValue (Cairo uses x, y)
+@property (nonatomic, assign) int numberOfPoints;
+@property (nonatomic, strong) NSString *ops;  // NSString for ops
+@property (nonatomic, assign) CGPoint cp;    // Use CGPoint instead of NXPoint
+@property (nonatomic, assign) int numberOfOps;
+@property (nonatomic, assign) int max;
+@property (nonatomic, assign) float bbox[4];  // Still use a C array for bbox
+@property (nonatomic, assign) int opForUserPath;
+@property (nonatomic, assign) BOOL ping;
 
-/* UserPath functions */
-NXZone *userPathZone();
-UserPath *newUserPath();
-void freeUserPath(UserPath *up);
-void debugUserPath(UserPath *up, BOOL shouldPing);
-void growUserPath(UserPath *up);
-void beginUserPath(UserPath *up, BOOL cache);
-void endUserPath(UserPath *up, int op);
-int sendUserPath(UserPath *up);
-void UPmoveto(UserPath *up, float x, float y);
-void UPrmoveto(UserPath *up, float x, float y);
-void UPlineto(UserPath *up, float x, float y);
-void UPrlineto(UserPath *up, float x, float y);
-void UPcurveto(UserPath *up, float x1, float y1, float x2, float y2, float x3,
-	       float y3);
-void UPrcurveto(UserPath *up, float dx1, float dy1, float dx2, float dy2,
-		float dx3, float dy3);
-void UParc(UserPath *up, float x, float y, float r, float ang1, float ang2);
-void UParcn(UserPath *up, float x, float y, float r, float ang1, float ang2);
-void UParct(UserPath *up, float x1, float y1, float x2, float y2, float r);
-void closePath(UserPath *up);
-void addPts(UserPath *up, float x, float y);
-void addOp(UserPath *up, int op);
-void add(UserPath *up, int op, float x, float y);
-void checkBBox(UserPath *up, float x, float y);
+// Cairo context for drawing
+@property (nonatomic, assign) cairo_t *cr;  // Cairo context for the path
+
+// UserPath methods
++ (instancetype)userPath;  // Factory method for creating new UserPath
+- (void)debugUserPathWithPing:(BOOL)shouldPing;
+- (void)growUserPath;
+- (void)beginUserPathWithCache:(BOOL)cache;
+- (void)endUserPathWithOp:(int)op;
+- (int)sendUserPath;
+- (void)movetoWithX:(float)x Y:(float)y;
+- (void)rmovetoWithX:(float)x Y:(float)y;
+- (void)linetoWithX:(float)x Y:(float)y;
+- (void)rlinetoWithX:(float)x Y:(float)y;
+- (void)curvetoWithX1:(float)x1 Y1:(float)y1 X2:(float)x2 Y2:(float)y2 X3:(float)x3 Y3:(float)y3;
+- (void)rcurvetoWithDX1:(float)dx1 DY1:(float)dy1 DX2:(float)dx2 DY2:(float)dy2 DX3:(float)dx3 DY3:(float)dy3;
+- (void)arcWithX:(float)x Y:(float)y Radius:(float)r Angle1:(float)ang1 Angle2:(float)ang2;
+- (void)arcnWithX:(float)x Y:(float)y Radius:(float)r Angle1:(float)ang1 Angle2:(float)ang2;
+- (void)arctWithX1:(float)x1 Y1:(float)y1 X2:(float)x2 Y2:(float)y2 Radius:(float)r;
+- (void)closePath;
+- (void)addPointWithX:(float)x Y:(float)y;
+- (void)addOperation:(int)op;
+- (void)addOperation:(int)op X:(float)x Y:(float)y;
+- (void)checkBBoxWithX:(float)x Y:(float)y;
+
+@end
