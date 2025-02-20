@@ -5,7 +5,7 @@
 	id	button1;
 }
 
-- initFrame:(const NXRect *)frameRect button1: b1;
+- initFrame:(const NSRect *)frameRect button1: b1;
 - tile;
 
 @end

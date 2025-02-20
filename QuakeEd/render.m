@@ -551,7 +551,7 @@ void REN_BeginCamera (void)
 }
 
 
-void REN_BeginXY (void)
+void REN_BegiNSY (void)
 {
 	frustum[0].normal[0] = 1;
 	frustum[0].normal[1] = 0;

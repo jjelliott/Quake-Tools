@@ -38,7 +38,7 @@
 @property (nonatomic, strong) NSMutableArray<NSValue *> *points;  // Store points as NSValue (Cairo uses x, y)
 @property (nonatomic, assign) int numberOfPoints;
 @property (nonatomic, strong) NSString *ops;  // NSString for ops
-@property (nonatomic, assign) CGPoint cp;    // Use CGPoint instead of NXPoint
+@property (nonatomic, assign) CGPoint cp;    // Use CGPoint instead of NSPoint
 @property (nonatomic, assign) int numberOfOps;
 @property (nonatomic, assign) int max;
 @property (nonatomic, assign) float bbox[4];  // Still use a C array for bbox

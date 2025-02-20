@@ -175,10 +175,10 @@ char *getcwd (char *path, int length)
 
 
 /* globals for command line args */
-extern int NXArgc;
-extern char **NXArgv;
-#define myargc	NXArgc
-#define myargv	NXArgv
+extern int NSArgc;
+extern char **NSArgv;
+#define myargc	NSArgc
+#define myargv	NSArgv
 
 
 /*

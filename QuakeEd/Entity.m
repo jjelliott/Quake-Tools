@@ -43,7 +43,7 @@ vec3_t bad_maxs = {8, 8, 8};
 	return self;
 }
 
-- copyFromZone:(NXZone *)zone
+- copyFromZone:(NSZone *)zone
 {
 	id	new, nb;
 	epair_t	*e;

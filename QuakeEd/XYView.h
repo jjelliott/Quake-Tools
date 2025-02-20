@@ -12,7 +12,7 @@ extern	id xyview_i;
 extern	vec3_t		xy_viewnormal;		// v_forward for xy view
 extern	float		xy_viewdist;		// clip behind this plane
 
-extern	NXRect	xy_draw_rect;
+extern	NSRect	xy_draw_rect;
 
 void linestart (float r, float g, float b);
 void lineflush (void);
@@ -26,8 +26,8 @@ typedef enum {dr_wire, dr_flat, dr_texture} drawmode_t;
 
 @interface XYView :  View
 {
-	NXRect		realbounds, newrect, combinedrect;
-	NXPoint		midpoint;
+	NSRect		realbounds, newrect, combinedrect;
+	NSPoint		midpoint;
 	int			gridsize;
 	float		scale;
 
@@ -50,10 +50,10 @@ typedef enum {dr_wire, dr_flat, dr_texture} drawmode_t;
 - setDrawMode: (drawmode_t)mode;
 
 - newSuperBounds;
-- newRealBounds: (NXRect *)nb;
+- newRealBounds: (NSRect *)nb;
 
 - addToScrollRange: (float)x :(float)y;
-- setOrigin: (NXPoint *)pt scale: (float)sc;
+- setOrigin: (NSPoint *)pt scale: (float)sc;
 - centerOn: (vec3_t)org;
 
 - drawMode: sender;

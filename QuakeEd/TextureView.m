@@ -26,7 +26,7 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 	return YES;
 }
 
-- drawSelf:(const NXRect *)rects :(int)rectCount
+- drawSelf:(const NSRect *)rects :(int)rectCount
 {
 	int		i;
 	int		max;
@@ -34,8 +34,8 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 	texpal_t *t;
 	int		x;
 	int		y;
-	NXPoint	p;
-	NXRect	r;
+	NSPoint	p;
+	NSRect	r;
 	int		selected;
 	
 	selected = [parent_i getSelectedTexture];
@@ -43,7 +43,7 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 	PSselectfont("Helvetica-Medium",FONTSIZE);
 	PSrotate(0);
 	
-	PSsetgray(NX_LTGRAY);
+	PSsetgray(NS_LTGRAY);
 	PSrectfill(rects->origin.x, rects->origin.y, 
 		rects->size.width, rects->size.height);
 
@@ -59,7 +59,7 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 		r.size.width += TEX_INDENT*2;
 		r.size.height += TEX_INDENT*2;
 		
-		PSsetgray(NXGrayComponent(NX_COLORLTGRAY));
+		PSsetgray(NSGrayComponent(NS_COLORLTGRAY));
 		PSrectfill(r.origin.x, r.origin.y,
 			r.size.width, r.size.height);
 		p = t->r.origin;
@@ -84,7 +84,7 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 		r.origin.x -= TEX_INDENT/2;
 		r.size.width += TEX_INDENT;
 		r.origin.y += 4;
-		if (NXIntersectsRect(&rects[0],&r) == YES &&
+		if (NSIntersectsRect(&rects[0],&r) == YES &&
 			t->display)
 		{
 			if (selected == i)
@@ -117,17 +117,17 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 	return self;
 }
 
-- mouseDown:(NXEvent *)theEvent
+- mouseDown:(NSEvent *)theEvent
 {
-	NXPoint	loc;
+	NSPoint	loc;
 	int		i;
 	int		max;
 	int		oldwindowmask;
 	texpal_t *t;
 	id		list;
-	NXRect	r;
+	NSRect	r;
 
-	oldwindowmask = [window addToEventMask:NX_LMOUSEDRAGGEDMASK];
+	oldwindowmask = [window addToEventMask:NS_LMOUSEDRAGGEDMASK];
 	loc = theEvent->location;
 	[self convertPoint:&loc	fromView:NULL];
 	
@@ -137,7 +137,7 @@ NOTE: I am specifically not using cached image reps, because the data is also ne
 	{
 		t = [list elementAt:i];
 		r = t->r;
-		if (NXPointInRect(&loc,&r) == YES)
+		if (NSPointInRect(&loc,&r) == YES)
 		{
 			[self deselect]; 
 			[parent_i	setSelectedTexture:i];

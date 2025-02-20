@@ -621,7 +621,7 @@ initOwner:::
 	return self;
 }
 
-- copyFromZone:(NXZone *)zone
+- copyFromZone:(NSZone *)zone
 {
 	id	new;
 	
@@ -1228,7 +1228,7 @@ ZDrawSelf
 		PSstroke ();
 	}
 
-	[zview_i getPoint: (NXPoint *)p1];
+	[zview_i getPoint: (NSPoint *)p1];
 	
 	for (i=0 ; i<2 ; i++)
 		if (bmins[i] >= p1[i] || bmaxs[i] <= p1[i])
@@ -1979,7 +1979,7 @@ id		carve_in, carve_out;
 	id		front, back;
 		
 #if 0
-	if ( (i = NXMallocCheck()) )
+	if ( (i = NSMallocCheck()) )
 		Error ("MallocCheck failure");
 #endif
 		

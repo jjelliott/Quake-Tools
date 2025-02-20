@@ -10,7 +10,7 @@ id	keypairview_i;
 initFrame:
 ==================
 */
-- initFrame:(const NXRect *)frameRect
+- initFrame:(const NSRect *)frameRect
 {
 	[super initFrame:frameRect];
 	keypairview_i = self;
@@ -20,10 +20,10 @@ initFrame:
 
 - calcViewSize
 {
-	NXCoord	w;
-	NXCoord	h;
-	NXRect	b;
-	NXPoint	pt;
+	NSCoord	w;
+	NSCoord	h;
+	NSRect	b;
+	NSPoint	pt;
 	int		count;
 	id		ent;
 	
@@ -41,12 +41,12 @@ initFrame:
 	return self;
 }
 
-- drawSelf:(const NXRect *)rects :(int)rectCount
+- drawSelf:(const NSRect *)rects :(int)rectCount
 {
 	epair_t	*pair;
 	int		y;
 	
-	PSsetgray(NXGrayComponent(NX_COLORLTGRAY));
+	PSsetgray(NSGrayComponent(NS_COLORLTGRAY));
 	PSrectfill(0,0,bounds.size.width,bounds.size.height);
 		
 	PSselectfont("Helvetica-Bold",FONTSIZE);
@@ -68,9 +68,9 @@ initFrame:
 	return self;
 }
 
-- mouseDown:(NXEvent *)theEvent
+- mouseDown:(NSEvent *)theEvent
 {
-	NXPoint	loc;
+	NSPoint	loc;
 	int		i;
 	epair_t	*p;
 

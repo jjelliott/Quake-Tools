@@ -3,9 +3,12 @@
 #ifndef __CMDLIB__
 #define __CMDLIB__
 
+#include <sys/time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>   // For open() and its flags (O_* constants)
+#include <sys/stat.h> // For file permission constants (S_* constants)
 #include <errno.h>
 #include <ctype.h>
 
