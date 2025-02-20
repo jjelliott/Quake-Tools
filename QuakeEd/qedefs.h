@@ -2,7 +2,7 @@
 #import <AppKit/AppKit.h>
 #import <ctype.h>
 #import <sys/types.h>
-#import <sys/dir.h>
+#import <dirent.h>
 
 #import "UserPath.h"
 #import "cmdlib.h"
@@ -44,7 +44,7 @@ void Error (char *error, ...);
 extern	char	token[MAXTOKEN];
 extern	int		scriptline;
 void	StartTokenParsing (char *data);
-boolean GetToken (boolean crossline);	// returns false at eof
+bool GetToken (bool crossline);	// returns false at eof
 void UngetToken ();
 
 

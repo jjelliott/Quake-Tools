@@ -230,7 +230,7 @@ EVENT HANDLING
     NSPoint location = [self convertPoint:[event locationInWindow] fromView:nil];
     NSLog(@"Mouse clicked at: (%.2f, %.2f)", location.x, location.y);
 
-    if ([event modifierFlags] & NSEventModifierFlagShift) {
+    if ([event modifierFlags] & NSEventModifierFlags.shift) {
         NSLog(@"Shift-click: Selecting entity");
         [map_i selectRay:origin :location :NO];
     } else {

@@ -26,8 +26,7 @@ QuakeEd_RESOURCE_FILES = i_quakeed.tiff QuakeEd.nib DownArrow.tiff i_90d.tiff \
 # Linking against GNUstep libraries
 QuakeEd_LIBS = -lgnustep-gui -lgnustep-base -lcairo
 
-CFLAGS += -Wno-error=implicit-function-declaration  # Downgrade to warning
-CFLAGS += -Wno-error=int-conversion  # Downgrade to warning
+
 
 # Installation path
 APP_INSTALL_DIR = $(GNUSTEP_LOCAL_APPS)

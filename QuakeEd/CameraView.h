@@ -1,6 +1,7 @@
 #import <AppKit/AppKit.h>  // GNUstep uses AppKit for GUI components
 #import "mathlib.h"
 #import "SetBrush.h"
+#import "TexturePalette.h"
 
 extern id cameraview_i;
 extern uint8_t renderlist[1024 * 1024 * 4];

@@ -3,7 +3,7 @@
 
 
 char	token[MAXTOKEN];
-boolean	unget;
+bool	unget;
 char	*script_p;
 int		scriptline;
 
@@ -14,7 +14,7 @@ void	StartTokenParsing (char *data)
 	unget = false;
 }
 
-boolean GetToken (boolean crossline)
+bool GetToken (bool crossline)
 {
 	char    *token_p;
 

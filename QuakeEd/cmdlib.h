@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>   // For open() and its flags (O_* constants)
 #include <sys/stat.h> // For file permission constants (S_* constants)
@@ -16,12 +17,12 @@
 #define stricmp strcasecmp
 char *strupr (char *in);
 char *strlower (char *in);
-int filelength (int handle);
-int tell (int handle);
+//int filelength (int handle);
+//int tell (int handle);
 
 #ifndef __BYTEBOOL__
 #define __BYTEBOOL__
-typedef enum {false, true} boolean;
+//typedef enum {false, true} bool;
 typedef unsigned char byte;
 #endif
 
@@ -60,7 +61,7 @@ float	BigFloat (float l);
 float	LittleFloat (float l);
 
 extern	char		com_token[1024];
-extern	boolean		com_eof;
+extern	bool		com_eof;
 
 
 char *COM_Parse (char *data);

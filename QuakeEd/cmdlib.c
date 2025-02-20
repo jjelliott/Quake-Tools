@@ -1,12 +1,6 @@
 // cmdlib.c
 
 #include "cmdlib.h"
-#include <sys/time.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>   // For open() and its flags (O_* constants)
-#include <sys/stat.h> // For file permission constants (S_* constants)
 #define PATHSEPERATOR   '/'
 
 
@@ -34,7 +28,7 @@ double I_FloatTime (void)
 
 
 char		com_token[1024];
-boolean		com_eof;
+bool		com_eof;
 
 /*
 ==============
@@ -126,23 +120,23 @@ skipwhite:
 ================
 */
 
-int filelength (int handle)
-{
-	struct stat	fileinfo;
-    
-	if (fstat (handle,&fileinfo) == -1)
-	{
-		fprintf (stderr,"Error fstating");
-		exit (1);
-	}
-
-	return fileinfo.st_size;
-}
-
-int tell (int handle)
-{
-	return lseek (handle, 0, SEEK_CUR);
-}
+//int filelength (int handle)
+//{
+//	struct stat	fileinfo;
+//
+//	if (fstat (handle,&fileinfo) == -1)
+//	{
+//		fprintf (stderr,"Error fstating");
+//		exit (1);
+//	}
+//
+//	return fileinfo.st_size;
+//}
+//
+//int tell (int handle)
+//{
+//	return lseek (handle, 0, SEEK_CUR);
+//}
 
 char *strupr (char *start)
 {

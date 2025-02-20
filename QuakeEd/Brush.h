@@ -2,54 +2,55 @@
 #import "SetBrush.h"
 #import "EditWindow.h"
 
-extern	id	brush_i;
-
-extern	BOOL	brushdraw;			// YES when drawing cutbrushes and ents
+extern id brush_i;
+extern BOOL brushdraw;  // YES when drawing cut brushes and entities
 
 @interface Brush : SetBrush
-{
-	id			cutbrushes_i;
-	id			cutentities_i;
-	boolean		updatemask[MAXBRUSHVERTEX];
-	BOOL		dontdraw;				// for modal instance loops	
-	BOOL		deleted;				// when not visible at all	
-}
 
-- init;
+@property (nonatomic, strong) id cutbrushes;
+@property (nonatomic, strong) id cutentities;
+@property (nonatomic, assign) BOOL dontdraw;   // For modal instance loops
+@property (nonatomic, assign) BOOL deleted;    // When not visible at all
+@property (nonatomic, assign) BOOL updatemask[MAXBRUSHVERTEX];
 
-- initFromSetBrush: br;
+// Initializers
+- (instancetype)init;
+- (instancetype)initFromSetBrush:(Brush *)br;
 
-- deselect;
+// Selection
+- (void)deselect;
 - (BOOL)isSelected;
 
-- (BOOL)XYmouseDown: (NSPoint *)pt;		// return YES if brush handled
-- (BOOL)ZmouseDown: (NSPoint *)pt;		// return YES if brush handled
+// Mouse Event Handling
+- (BOOL)XYmouseDown:(NSPoint *)pt;  // Return YES if brush handled
+- (BOOL)ZmouseDown:(NSPoint *)pt;   // Return YES if brush handled
 
-- _keyDown:(NSEvent *)theEvent;
+// Keyboard Event Handling
+- (void)keyDown:(NSEvent *)theEvent;
 
-- (NSPoint)centerPoint;						// for camera flyby mode
+// Brush Operations
+- (NSPoint)centerPoint;  // For camera flyby mode
 
-- InstanceSize;
-- XYDrawSelf;
-- ZDrawSelf;
-- CameraDrawSelf;
+- (void)instanceSize;
+- (void)XYDrawSelf;
+- (void)ZDrawSelf;
+- (void)CameraDrawSelf;
 
-- flipHorizontal: sender;
-- flipVertical: sender;
-- rotate90: sender;
+// Transformations
+- (void)flipHorizontal:(id)sender;
+- (void)flipVertical:(id)sender;
+- (void)rotate90:(id)sender;
 
-- makeTall: sender;
-- makeShort: sender;
-- makeWide: sender;
-- makeNarrow: sender;
+- (void)makeTall:(id)sender;
+- (void)makeShort:(id)sender;
+- (void)makeWide:(id)sender;
+- (void)makeNarrow:(id)sender;
 
-- placeEntity: sender;
+// Entity and Clipboard Operations
+- (void)placeEntity:(id)sender;
+- (void)cut:(id)sender;
+- (void)copy:(id)sender;
 
-- cut: sender;
-- copy: sender;
-
-- addBrush;
+- (void)addBrush;
 
 @end
-
-
