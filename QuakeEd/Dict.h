@@ -1,5 +1,5 @@
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 
 typedef struct
 {
@@ -7,7 +7,7 @@ typedef struct
 	char	*value;
 } dict_t;
 
-@interface Dict:Storage
+@interface Dict:NSMutableArray
 {
 }
 

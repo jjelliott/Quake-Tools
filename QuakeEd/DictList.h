@@ -1,7 +1,7 @@
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 
-@interface DictList:List
+@interface DictList:NSMutableArray
 {
 }
 

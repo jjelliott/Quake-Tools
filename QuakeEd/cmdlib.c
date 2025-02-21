@@ -29,7 +29,7 @@ double I_FloatTime (void)
 
 
 char		com_token[1024];
-boolean		com_eof;
+bool		com_eof;
 
 /*
 ==============
@@ -163,17 +163,17 @@ char *strlower (char *start)
 	return start;
 }
 
-char *getcwd (char *path, int length)
-{
-	return getwd(path);
-}
+// char *getcwd (char *path, int length)
+// {
+// 	return getwd(path);
+// }
 
 
 /* globals for command line args */
-extern int NXArgc;
-extern char **NXArgv;
-#define myargc	NXArgc
-#define myargv	NXArgv
+extern int NSArgc;
+extern char **NSArgv;
+#define myargc	NSArgc
+#define myargv	NSArgv
 
 
 /*

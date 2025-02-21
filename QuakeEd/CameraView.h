@@ -1,4 +1,5 @@
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
 #import "mathlib.h"
 #import "SetBrush.h"
 
@@ -11,7 +12,7 @@ void CameraLineto(vec3_t p);
 
 extern	BOOL	timedrawing;
 
-@interface CameraView :  View
+@interface CameraView :  NSView
 {
 	float		xa, ya, za;
 	float		move;
@@ -24,7 +25,7 @@ extern	BOOL	timedrawing;
 	vec3_t		origin;
 	vec3_t		matrix[3];
 	
-	NXPoint		dragspot;
+	NSPoint		dragspot;
 	
 	drawmode_t	drawmode;
 	
@@ -33,7 +34,7 @@ extern	BOOL	timedrawing;
 	
 }
 
-- setXYOrigin: (NXPoint *)pt;
+- setXYOrigin: (NSPoint *)pt;
 - setZOrigin: (float)pt;
 
 - setOrigin: (vec3_t)org angle: (float)angle;
@@ -42,7 +43,7 @@ extern	BOOL	timedrawing;
 - (float)yawAngle;
 
 - matrixFromAngles;
-- _keyDown: (NXEvent *)theEvent;
+- _keyDown: (NSEvent *)theEvent;
 
 - drawMode: sender;
 - setDrawMode: (drawmode_t)mode;
@@ -51,8 +52,8 @@ extern	BOOL	timedrawing;
 
 - XYDrawSelf;						// for drawing viewpoint in XY view
 - ZDrawSelf;						// for drawing viewpoint in XY view
-- (BOOL)XYmouseDown: (NXPoint *)pt flags:(int)flags;	// return YES if brush handled
-- (BOOL)ZmouseDown: (NXPoint *)pt flags:(int)flags;	// return YES if brush handled
+- (BOOL)XYmouseDown: (NSPoint *)pt flags:(int)flags;	// return YES if brush handled
+- (BOOL)ZmouseDown: (NSPoint *)pt flags:(int)flags;	// return YES if brush handled
 
 - upFloor:sender;
 - downFloor: sender;

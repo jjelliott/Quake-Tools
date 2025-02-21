@@ -11,11 +11,11 @@ BOOL	timedrawing = 0;
 initFrame:
 ==================
 */
-- initFrame:(const NXRect *)frameRect
+- initFrame:(const NSRect )frameRect
 {
 	int		size;
 	
-	[super initFrame: frameRect];
+	[super initWithFrame: frameRect];
 	
 	cameraview_i = self;
 	
@@ -29,14 +29,14 @@ initFrame:
 	
 	move = 16;
 	
-	size = bounds.size.width * bounds.size.height;
+	size = self.bounds.size.width * self.bounds.size.height;
 	zbuffer = malloc (size*4);
 	imagebuffer = malloc (size*4);
 	
 	return self;
 }
 
-- setXYOrigin: (NXPoint *)pt
+- setXYOrigin: (NSPoint *)pt
 {
 	origin[0] = pt->x;
 	origin[1] = pt->y;
@@ -128,7 +128,15 @@ homeView
 
 - drawMode: sender
 {
-	drawmode = [sender selectedCol];
+	 if ([sender isKindOfClass:[NSMatrix class]]) {
+        drawmode = (drawmode_t)[sender selectedColumn]; // For NSMatrix
+    } 
+    else if ([sender isKindOfClass:[NSPopUpButton class]]) {
+        drawmode = (drawmode_t)[sender indexOfSelectedItem]; // For NSPopUpButton
+    }
+    else if ([sender isKindOfClass:[NSButton class]]) {
+        drawmode = (drawmode_t)[sender tag]; // For individual radio buttons
+    }
 	[quakeed_i updateCamera];
 	return self;
 }
@@ -136,7 +144,7 @@ homeView
 - setDrawMode: (drawmode_t)mode
 {
 	drawmode = mode;
-	[mode_radio_i selectCellAt:0: mode];
+	[mode_radio_i selectCellAtRow:0 column:mode];
 	[quakeed_i updateCamera];
 	return self;
 }
@@ -378,8 +386,8 @@ drawSolid
 	VectorCopy (matrix[1], r_matrix[1]);
 	VectorCopy (matrix[2], r_matrix[2]);
 	
-	r_width = bounds.size.width;
-	r_height = bounds.size.height;
+	r_width = self.bounds.size.width;
+	r_height = self.bounds.size.height;
 	r_picbuffer = imagebuffer;
 	r_zbuffer = zbuffer;
 
@@ -396,25 +404,34 @@ drawSolid
 //
 // display the output
 //
-	[[self window] setBackingType:NX_RETAINED];
+	[[self window] setOpaque:YES];
+	[[self window] setAutodisplay:YES];
+
 	
 	planes[0] = (unsigned char *)imagebuffer;
-	NXDrawBitmap(
-		&bounds,  
-		r_width, 
-		r_height,
-		8,
-		3,
-		32,
-		r_width*4,
-		NO,
-		NO,
-		NX_RGBColorSpace,
-		planes
-	);
+	
+NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc]
+    initWithBitmapDataPlanes:planes
+                  pixelsWide:r_width
+                  pixelsHigh:r_height
+               bitsPerSample:8
+             samplesPerPixel:3
+                    hasAlpha:NO
+                    isPlanar:NO
+              colorSpaceName:NSCalibratedRGBColorSpace
+                 bytesPerRow:r_width * 4
+                bitsPerPixel:32];
 
-	NXPing ();
-	[[self window] setBackingType:NX_BUFFERED];
+NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize(r_width, r_height)];
+[image addRepresentation:imageRep];
+
+[image drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, r_width, r_height) operation:NSCompositeSourceOver fraction:1.0];
+
+[imageRep release];
+[image release];
+
+	[[self window] setOpaque:YES];
+	[[self window] setAutodisplay:YES];
 	
 	
 	
@@ -427,26 +444,26 @@ drawSolid
 drawWire
 ===================
 */
-- drawWire: (const NXRect *)rect
+- drawWire: (const NSRect)rect
 {
 // copy current info to globals for the C callbacks	
-	mid_x = bounds.size.width / 2;
-	mid_y = 2 * bounds.size.height / 3;
+	mid_x = self.bounds.size.width / 2;
+	mid_y = 2 * self.bounds.size.height / 3;
 
 	VectorCopy (origin, r_origin);
 	VectorCopy (matrix[0], r_matrix[0]);
 	VectorCopy (matrix[1], r_matrix[1]);
 	VectorCopy (matrix[2], r_matrix[2]);
 	
-	r_width = bounds.size.width;
-	r_height = bounds.size.height;
+	r_width = self.bounds.size.width;
+	r_height = self.bounds.size.height;
 	r_picbuffer = imagebuffer;
 	r_zbuffer = zbuffer;
 
 	REN_BeginCamera ();
 	
 // erase window
-	NXEraseRect (rect);
+	NSEraseRect (rect);
 	
 // draw all entities
 	linestart (0,0,0);
@@ -461,7 +478,7 @@ drawWire
 drawSelf
 ===================
 */
-- drawSelf:(const NXRect *)rects :(int)rectCount
+- drawSelf:(const NSRect )rects :(int)rectCount
 {
 	static float	drawtime;	// static to shut up compiler warning
 
@@ -475,7 +492,6 @@ drawSelf
 
 	if (timedrawing)
 	{
-		NXPing ();
 		drawtime = I_FloatTime() - drawtime;
 		printf ("CameraView drawtime: %5.3f\n", drawtime);
 	}
@@ -553,12 +569,12 @@ ZDrawSelf
 modalMoveLoop
 ================
 */
-- modalMoveLoop: (NXPoint *)basept :(vec3_t)movemod : converter
+- modalMoveLoop: (NSPoint *)basept :(vec3_t)movemod : converter
 {
 	vec3_t		originbase;
-	NXEvent		*event;
-	NXPoint		newpt;
-//	NXPoint		brushpt;
+	NSEvent		*event;
+	NSPoint		newpt;
+//	NSPoint		brushpt;
 	vec3_t		delta;
 //	id			ent;
 	int			i;
@@ -573,13 +589,13 @@ modalMoveLoop
 //
 	goto drawentry;
 
-	while (event->type != NX_LMOUSEUP && event->type != NX_RMOUSEUP)
+	while ([event type] != NSLeftMouseUp && [event type] != NSRightMouseUp)
 	{
 		//
 		// calculate new point
 		//
-		newpt = event->location;
-		[converter convertPoint:&newpt  fromView:NULL];
+		newpt = [event locationInWindow];
+		[converter convertPoint:newpt  fromView:NULL];
 				
 		delta[0] = newpt.x-basept->x;
 		delta[1] = newpt.y-basept->y;
@@ -592,7 +608,7 @@ modalMoveLoop
 		//
 		// if command is down, look towards brush or entity
 		//
-		if (event->flags & NX_SHIFTMASK)
+		if (event->flags & NS_SHIFTMASK)
 		{
 			ent = [quakemap_i selectedEntity];
 			if (ent)
@@ -615,14 +631,17 @@ drawentry:
 		[quakeed_i newinstance];
 		[self display];
 		
-		event = [NXApp getNextEvent: NX_LMOUSEUPMASK | NX_LMOUSEDRAGGEDMASK
-			| NX_RMOUSEUPMASK | NX_RMOUSEDRAGGEDMASK | NX_APPDEFINEDMASK];
-	
-		if (event->type == NX_KEYDOWN)
-		{
-			[self _keyDown: event];
-			[self display];
-			goto drawentry;
+		event = [NSApp nextEventMatchingMask:(NSLeftMouseUpMask | NSLeftMouseDraggedMask |
+                                      NSRightMouseUpMask | NSRightMouseDraggedMask |
+                                      NSAppKitDefinedMask)
+                           untilDate:nil
+                              inMode:NSDefaultRunLoopMode
+                             dequeue:YES];
+
+		if ([event type] == NSKeyDown) {
+		    [self _keyDown:event];
+    		[self display];
+    		goto drawentry;
 		}
 		
 	}
@@ -637,7 +656,7 @@ drawentry:
 XYmouseDown
 ===============
 */
-- (BOOL)XYmouseDown: (NXPoint *)pt flags:(int)flags	// return YES if brush handled
+- (BOOL)XYmouseDown: (NSPoint *)pt flags:(int)flags	// return YES if brush handled
 {	
 	vec3_t		movemod;
 	
@@ -646,7 +665,7 @@ XYmouseDown
 		return NO;
 	
 #if 0	
-	if (flags & NX_ALTERNATEMASK)
+	if (flags & NS_ALTERNATEMASK)
 	{	// up / down drag
 		movemod[0] = 0;
 		movemod[1] = 0;
@@ -671,7 +690,7 @@ XYmouseDown
 ZmouseDown
 ===============
 */
-- (BOOL)ZmouseDown: (NXPoint *)pt flags:(int)flags	// return YES if brush handled
+- (BOOL)ZmouseDown: (NSPoint *)pt flags:(int)flags	// return YES if brush handled
 {	
 	vec3_t		movemod;
 	
@@ -696,18 +715,18 @@ ZmouseDown
 viewDrag:
 ===================
 */
-- viewDrag:(NXPoint *)pt
+- viewDrag:(NSPoint *)pt
 {
 	float	dx,dy;
-	NXEvent		*event;
-	NXPoint		newpt;
+	NSEvent		*event;
+	NSPoint		newpt;
 	
 //
 // modal event loop using instance drawing
 //
 	goto drawentry;
 
-	while (event->type != NX_RMOUSEUP)
+	while (event->type != NS_RMOUSEUP)
 	{
 		//
 		// calculate new point
@@ -719,8 +738,8 @@ viewDrag:
 		dy = newpt.y - pt->y;
 		*pt = newpt;
 	
-		ya -= dx/bounds.size.width*M_PI/2 * 4;
-		xa += dy/bounds.size.width*M_PI/2 * 4;
+		ya -= dx/self.bounds.size.width*M_PI/2 * 4;
+		xa += dy/self.bounds.size.width*M_PI/2 * 4;
 	
 		[self matrixFromAngles];
 		
@@ -728,10 +747,10 @@ drawentry:
 		[quakeed_i newinstance];
 		[self display];
 		
-		event = [NXApp getNextEvent: 
-			NX_KEYDOWNMASK | NX_RMOUSEUPMASK | NX_RMOUSEDRAGGEDMASK];
+		event = [NSApp getNextEvent: 
+			NS_KEYDOWNMASK | NS_RMOUSEUPMASK | NS_RMOUSEDRAGGEDMASK];
 	
-		if (event->type == NX_KEYDOWN)
+		if (event->type == NS_KEYDOWN)
 		{
 			[self _keyDown: event];
 			[self display];
@@ -751,9 +770,9 @@ drawentry:
 mouseDown
 ===================
 */
-- mouseDown:(NXEvent *)theEvent
+- mouseDown:(NSEvent *)theEvent
 {
-	NXPoint			pt;
+	NSPoint			pt;
 	int				i;
 	vec3_t			p1, p2;
 	float			forward, right, up;
@@ -772,7 +791,7 @@ mouseDown
 	for (i=0 ; i<3 ; i++)
 		p2[i] = p1[i] + 100*p2[i];
 
-	flags = theEvent->flags & (NX_SHIFTMASK | NX_CONTROLMASK | NX_ALTERNATEMASK | NX_COMMANDMASK);
+	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
 
 //
 // bare click to select a texture
@@ -786,7 +805,7 @@ mouseDown
 //
 // shift click to select / deselect a brush from the world
 //
-	if (flags == NX_SHIFTMASK)
+	if (flags == NS_SHIFTMASK)
 	{		
 		[map_i selectRay: p1 : p2 : NO];
 		return self;
@@ -796,7 +815,7 @@ mouseDown
 //
 // cmd-shift click to set a target/targetname entity connection
 //
-	if (flags == (NX_SHIFTMASK|NX_COMMANDMASK) )
+	if (flags == (NS_SHIFTMASK|NS_COMMANDMASK) )
 	{
 		[map_i entityConnect: p1 : p2];
 		return self;
@@ -805,7 +824,7 @@ mouseDown
 //
 // alt click = set entire brush texture
 //
-	if (flags == NX_ALTERNATEMASK)
+	if (flags == NS_ALTERNATEMASK)
 	{
 		if (drawmode != dr_texture)
 		{
@@ -821,7 +840,7 @@ mouseDown
 //
 // ctrl-alt click = set single face texture
 //
-	if (flags == (NX_CONTROLMASK | NX_ALTERNATEMASK) )
+	if (flags == (NS_CONTROLMASK | NS_ALTERNATEMASK) )
 	{
 		if (drawmode != dr_texture)
 		{
@@ -846,16 +865,16 @@ mouseDown
 rightMouseDown
 ===================
 */
-- rightMouseDown:(NXEvent *)theEvent
+- rightMouseDown:(NSEvent *)theEvent
 {
-	NXPoint			pt;
+	NSPoint			pt;
 	int				flags;
 		
 	pt = theEvent->location;
 	
 	[self convertPoint:&pt  fromView:NULL];
 
-	flags = theEvent->flags & (NX_SHIFTMASK | NX_CONTROLMASK | NX_ALTERNATEMASK | NX_COMMANDMASK);
+	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
 
 //
 // click = drag camera
@@ -886,7 +905,7 @@ keyDown
 #define	KEY_DOWNARROW		0xaf
 
 
-- _keyDown: (NXEvent *)theEvent
+- _keyDown: (NSEvent *)theEvent
 {
     int	ch;
 	

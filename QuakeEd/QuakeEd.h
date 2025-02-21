@@ -14,7 +14,7 @@ void NopSound (void);
 
 void qprintf (char *fmt, ...);		// prints text to cmd_out_i
 
-@interface QuakeEd : Window
+@interface QuakeEd : NSWindow
 {
 	BOOL	dirty;
 	char	filename[1024];		// full path with .map extension

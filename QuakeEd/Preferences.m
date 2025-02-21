@@ -35,11 +35,11 @@ void WriteNumericDefault (char *name, float value)
 	char	str[128];
 	
 	sprintf (str,"%f", value);
-	NXWriteDefault (DEFOWNER, name, str);
+	NSWriteDefault (DEFOWNER, name, str);
 }
 void WriteStringDefault (char *name, char *value)
 {
-	NXWriteDefault (DEFOWNER, name, value);
+	NSWriteDefault (DEFOWNER, name, value);
 }
 
 //
@@ -50,28 +50,28 @@ void WriteStringDefault (char *name, char *value)
 	char *string;
 	float	value;
 	
-	string = (char *)NXGetDefaultValue(DEFOWNER,"ProjectPath");
+	string = (char *)NSGetDefaultValue(DEFOWNER,"ProjectPath");
 	[self setProjectPath: string];
 	
-	string = (char *)NXGetDefaultValue(DEFOWNER,"BspSoundPath");
+	string = (char *)NSGetDefaultValue(DEFOWNER,"BspSoundPath");
 	[self setBspSoundPath:string];
 
-	value = _atoi((char *)NXGetDefaultValue(DEFOWNER,"ShowBSPOutput"));
+	value = _atoi((char *)NSGetDefaultValue(DEFOWNER,"ShowBSPOutput"));
 	[self setShowBSP:value];
 
-	value = _atoi((char *)NXGetDefaultValue(DEFOWNER,"OffsetBrushCopy"));
+	value = _atoi((char *)NSGetDefaultValue(DEFOWNER,"OffsetBrushCopy"));
 	[self setBrushOffset:value];
 
-	value = _atoi((char *)NXGetDefaultValue(DEFOWNER,"StartWad"));
+	value = _atoi((char *)NSGetDefaultValue(DEFOWNER,"StartWad"));
 	[self setStartWad:value];
 
-	value = _atof((char *)NXGetDefaultValue(DEFOWNER,"Xlight"));
+	value = _atof((char *)NSGetDefaultValue(DEFOWNER,"Xlight"));
 	[self setXlight:value];
 
-	value = _atof((char *)NXGetDefaultValue(DEFOWNER,"Ylight"));
+	value = _atof((char *)NSGetDefaultValue(DEFOWNER,"Ylight"));
 	[self setYlight:value];
 
-	value = _atof((char *)NXGetDefaultValue(DEFOWNER,"Zlight"));
+	value = _atof((char *)NSGetDefaultValue(DEFOWNER,"Zlight"));
 	[self setZlight:value];
 
 	return self;

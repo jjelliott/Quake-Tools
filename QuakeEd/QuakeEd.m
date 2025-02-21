@@ -26,7 +26,7 @@ char	*leakcmd = "rsh satan \"/LocalApps/qbsp -mark -notjunc $1 $2\"";
 
 void NopSound (void)
 {
-	NXBeep ();
+	NSBeep ();
 }
 
 UserPath	*upath;
@@ -71,7 +71,7 @@ void DisplayCmdOutput (void)
 
 	[preferences_i playBspSound];		
 	
-	NXPing ();
+	
 }
 
 /*
@@ -103,7 +103,7 @@ void CheckCmdDone(DPSTimedEntry tag, double now, void *userData)
 init
 ===============
 */
-- initContent:(const NXRect *)contentRect
+- initContent:(const NSRect *)contentRect
 style:(int)aStyle
 backing:(int)backingType
 buttonMask:(int)mask
@@ -116,14 +116,14 @@ defer:(BOOL)flag
 		defer:flag];
 
 	[self addToEventMask:
-		NX_RMOUSEDRAGGEDMASK|NX_LMOUSEDRAGGEDMASK];	
+		NS_RMOUSEDRAGGEDMASK|NS_LMOUSEDRAGGEDMASK];	
 	
     malloc_error(My_Malloc_Error);
 	
 	quakeed_i = self;
 	dirty = autodirty = NO;
 
-	DPSAddTimedEntry(5*60, AutoSave, self, NX_BASETHRESHOLD);
+	DPSAddTimedEntry(5*60, AutoSave, self, NS_BASETHRESHOLD);
 
 	upath = newUserPath ();
 
@@ -162,13 +162,13 @@ BOOL	updatecamera;
 
 void postappdefined (void)
 {
-	NXEvent ev;
+	NSEvent ev;
 
 	if (updateinflight)
 		return;
 			
 // post an event at the end of the que
-	ev.type = NX_APPDEFINED;
+	ev.type = NS_APPDEFINED;
 	if (DPSPostEvent(&ev, 0) == -1)
 		printf ("WARNING: DPSPostEvent: full\n");
 //printf ("posted\n");
@@ -291,16 +291,16 @@ App delegate methods
 ==============================================================================
 */
 
-- applicationDefined:(NXEvent *)theEvent
+- applicationDefined:(NSEvent *)theEvent
 {
-	NXEvent		ev, *evp;
+	NSEvent		ev, *evp;
 	
 	updateinflight = NO;
 
 //printf ("serviced\n");
 	
 // update screen	
-	evp = [NXApp peekNextEvent:-1 into:&ev];
+	evp = [NSApp peekNextEvent:-1 into:&ev];
 	if (evp)
 	{
 		postappdefined();
@@ -327,14 +327,14 @@ App delegate methods
 	[self reenableFlushWindow];
 	[self flushWindow];
 	
-//	NXPing ();
+//	
 	
 	return self;
 }
 
 - appDidInit:sender
 {
-	NXScreen	const *screens;
+	NSScreen	const *screens;
 	int			screencount;
 	
 	running = YES;
@@ -351,7 +351,7 @@ App delegate methods
 	[self clear: self];
 
 // go to my second monitor
-	[NXApp getScreens:&screens count:&screencount];
+	[NSApp getScreens:&screens count:&screencount];
 	if (screencount == 2)
 		[self moveTopLeftTo:0 : screens[1].screenBounds.size.height
 		screen:screens+1];
@@ -425,7 +425,7 @@ App delegate methods
 
 - centerCamera: sender
 {
-	NXRect	sbounds;
+	NSRect	sbounds;
 	
 	[[xyview_i superview] getBounds: &sbounds];
 	
@@ -440,7 +440,7 @@ App delegate methods
 
 - centerZChecker: sender
 {
-	NXRect	sbounds;
+	NSRect	sbounds;
 	
 	[[xyview_i superview] getBounds: &sbounds];
 	
@@ -528,7 +528,7 @@ applyRegion:
 
 - setXYRegion: sender
 {
-	NXRect	bounds;
+	NSRect	bounds;
 	
 // get xy size
 	[[xyview_i superview] getBounds: &bounds];
@@ -610,7 +610,7 @@ saveBSP
 	
 	if (bsppid)
 	{
-		NXBeep();
+		NSBeep();
 		return self;
 	}
 
@@ -668,16 +668,16 @@ saveBSP
 	{
 		id		panel;
 		
-		panel = NXGetAlertPanel("BSP In Progress",expandedcmd,NULL,NULL,NULL);
+		panel = NSGetAlertPanel("BSP In Progress",expandedcmd,NULL,NULL,NULL);
 		[panel makeKeyAndOrderFront:NULL];
 		system(expandedcmd);
-		NXFreeAlertPanel(panel);
+		NSFreeAlertPanel(panel);
 		[self makeKeyAndOrderFront:NULL];
 		DisplayCmdOutput ();
 	}
 	else
 	{
-		cmdte = DPSAddTimedEntry(1, CheckCmdDone, self, NX_BASETHRESHOLD);
+		cmdte = DPSAddTimedEntry(1, CheckCmdDone, self, NS_BASETHRESHOLD);
 		if (! (bsppid = fork ()) )
 		{
 			system (expandedcmd);
@@ -723,7 +723,7 @@ saveBSP
 {
 	if (!bsppid)
 	{
-		NXBeep();
+		NSBeep();
 		return self;
 	}
 	
@@ -774,7 +774,7 @@ open
 	if ( [openpanel 
 			runModalForDirectory: [project_i getMapDirectory] 
 			file: ""
-			types: suffixlist] != NX_OKTAG)
+			types: suffixlist] != NS_OKTAG)
 		return self;
 
 	[self doOpen: (char *)[openpanel filename]];
@@ -822,7 +822,7 @@ saveAs
 	panel_i = [SavePanel new];
 	ExtractFileBase (filename, dir);
 	[panel_i setRequiredFileType: "map"];
-	if ( [panel_i runModalForDirectory:[project_i getMapDirectory] file: dir] != NX_OKTAG)
+	if ( [panel_i runModalForDirectory:[project_i getMapDirectory] file: dir] != NS_OKTAG)
 		return self;
 	
 	strcpy (filename, [panel_i filename]);
@@ -876,7 +876,7 @@ keyDown
 #define	KEY_UPARROW			0xad
 #define	KEY_DOWNARROW		0xaf
 
-- keyDown:(NXEvent *)theEvent
+- keyDown:(NSEvent *)theEvent
 {
     int		ch;
 	

@@ -35,7 +35,7 @@
 	if (fp == NULL)
 		return NULL;
 		
-	fprintf(fp,"// Object List written by QuakeEd\n");
+	fprintf(fp,"// NSObject List written by QuakeEd\n");
 
 	for (i = 0;i < maxElements;i++)
 	{

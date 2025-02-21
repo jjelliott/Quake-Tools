@@ -927,14 +927,14 @@ UI operations
 	if (currentEntity != [self objectAt: 0])
 	{
 		qprintf ("ERROR: can't makeEntity inside an entity");
-		NXBeep ();
+		NSBeep ();
 		return self;
 	}
 	
 	if ( [self numSelected] == 0)
 	{
 		qprintf ("ERROR: must have a seed brush to make an entity");
-		NXBeep ();
+		NSBeep ();
 		return self;
 	}
 	

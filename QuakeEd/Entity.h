@@ -10,7 +10,7 @@ typedef struct epair_s
 
 // an Entity is a list of brush objects, with additional key / value info
 
-@interface Entity : List
+@interface Entity : NSMutableArray
 {
 	epair_t	*epairs;
 	BOOL	modifiable;

@@ -90,9 +90,9 @@ id		inspcontrol_i;
 - changeInspectorTo:(insp_e)which
 {
 	id		newView;
-	NXRect	r;
+	NSRect	r;
 	id		cell;
-	NXRect	f;
+	NSRect	f;
 	
 	if (which == currentInspectorType)
 		return self;
@@ -106,13 +106,13 @@ id		inspcontrol_i;
 	[inspectorView_i replaceSubview:inspectorSubview_i with:newView];
 	[inspectorView_i getFrame:&r];
 	inspectorSubview_i = newView;
-	[inspectorSubview_i setAutosizing:NX_WIDTHSIZABLE | NX_HEIGHTSIZABLE];
+	[inspectorSubview_i setAutosizing:NS_WIDTHSIZABLE | NS_HEIGHTSIZABLE];
 	[inspectorSubview_i sizeTo:r.size.width - 4 :r.size.height - 4];
 	
 	[inspectorSubview_i lockFocus];
 	[inspectorSubview_i getBounds:&f];
-	PSsetgray(NX_LTGRAY);
-	NXRectFill(&f);
+	PSsetgray(NS_LTGRAY);
+	NSRectFill(&f);
 	[inspectorSubview_i unlockFocus];
 	[inspectorView_i display];
 	

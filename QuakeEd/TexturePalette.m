@@ -89,7 +89,7 @@ TEX_ImageFromMiptex
 */
 void TEX_ImageFromMiptex (miptex_t *qtex)
 {
-	NXBitmapImageRep	*bm;
+	NSBitmapImageRep	*bm;
 	byte		*source;
 	unsigned	*dest;
 	int			width, height, i, count;
@@ -99,7 +99,7 @@ void TEX_ImageFromMiptex (miptex_t *qtex)
 	width = LittleLong(qtex->width);
 	height = LittleLong(qtex->height);
 
-	bm = [[NXBitmapImageRep alloc]	
+	bm = [[NSBitmapImageRep alloc]	
 			initData:		NULL 
 			pixelsWide:		width 
 			pixelsHigh:		height 
@@ -107,7 +107,7 @@ void TEX_ImageFromMiptex (miptex_t *qtex)
 			samplesPerPixel:3 
 			hasAlpha:		NO
 			isPlanar:		NO 
-			colorSpace:		NX_RGBColorSpace 
+			colorSpace:		NS_RGBColorSpace 
 			bytesPerRow:	width*4 
 			bitsPerPixel:	32];
 	
@@ -372,10 +372,10 @@ qtexture_t *TEX_ForName (char *name)
 	texpal_t *t;
 	int		y;
 	id		view;
-	NXRect	b;
+	NSRect	b;
 	int		maxwidth;
 	int		maxheight;
-	NXPoint	pt;
+	NSPoint	pt;
 	
 	max = [textureList_i count];
 	y = 0;
@@ -454,7 +454,7 @@ qtexture_t *TEX_ForName (char *name)
 - setSelectedTexture:(int)which
 {
 	texpal_t *t;
-	NXRect	r;
+	NSRect	r;
 	char	string[16];
 
 // wipe the fields

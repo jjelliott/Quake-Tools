@@ -3,7 +3,7 @@
 
 extern	id	map_i;
 
-@interface Map : List
+@interface Map : NSMutableArray
 {
 	id		currentEntity;
 	id		oldselection;	// temp when loading a new map

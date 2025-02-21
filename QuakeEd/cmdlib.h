@@ -3,12 +3,20 @@
 #ifndef __CMDLIB__
 #define __CMDLIB__
 
-#include <libc.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include <ctype.h>
 
 #define strcmpi strcasecmp
 #define stricmp strcasecmp
+#define L_INCR SEEK_CUR
 char *strupr (char *in);
 char *strlower (char *in);
 int filelength (int handle);
@@ -16,7 +24,6 @@ int tell (int handle);
 
 #ifndef __BYTEBOOL__
 #define __BYTEBOOL__
-typedef enum {false, true} boolean;
 typedef unsigned char byte;
 #endif
 
@@ -55,8 +62,9 @@ float	BigFloat (float l);
 float	LittleFloat (float l);
 
 extern	char		com_token[1024];
-extern	boolean		com_eof;
-
+extern	bool		com_eof;
+
+
 char *COM_Parse (char *data);
 
 #endif

@@ -240,14 +240,14 @@ id	project_i;
 	sprintf(fname,"%s/%s.map",path_mapdirectory,
 		(char *)[mapList elementAt:row]);
 	
-	panel = NXGetAlertPanel("Loading...",
+	panel = NSGetAlertPanel("Loading...",
 		"Loading map. Please wait.",NULL,NULL,NULL);
 	[panel orderFront:NULL];
 
 	[quakeed_i doOpen:fname];
 
 	[panel performClose:NULL];
-	NXFreeAlertPanel(panel);
+	NSFreeAlertPanel(panel);
 	return self;
 }
 
@@ -311,12 +311,12 @@ id	project_i;
 	path = [preferences_i getProjectPath];
 	if (!path || !path[0] || access(path,0))
 	{
-		rtn = NXRunAlertPanel("Project Error!",
+		rtn = NSRunAlertPanel("Project Error!",
 			"A default project has not been found.\n"
 			, "Open Project", NULL, NULL);
 		if ([self openProject] == nil)
 			while (1)		// can't run without a project
-				[NXApp terminate: self];
+				[NSApp terminate: self];
 		return self;	
 	}
 
@@ -369,7 +369,7 @@ id	project_i;
 	[openpanel allowMultipleFiles:NO];
 	[openpanel chooseDirectories:NO];
 	rtn = [openpanel runModalForTypes:projtypes];
-	if (rtn == NX_OKTAG)
+	if (rtn == NS_OKTAG)
 	{
 		 (const char *const *)filenames = [openpanel filenames];
 		 dir = (char *)[openpanel directory];

@@ -1,5 +1,5 @@
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 #import <ctype.h>
 #import <sys/types.h>
 #import <sys/dir.h>
@@ -32,7 +32,7 @@
 #import "Clipper.h"
 
 
-void PrintRect (NXRect *r);
+void PrintRect (NSRect *r);
 int	FileTime (char *path);
 void Sys_UpdateFile (char *path, char *netpath);
 void CleanupName (char *in, char *out);
@@ -44,7 +44,7 @@ void Error (char *error, ...);
 extern	char	token[MAXTOKEN];
 extern	int		scriptline;
 void	StartTokenParsing (char *data);
-boolean GetToken (boolean crossline);	// returns false at eof
+bool GetToken (bool crossline);	// returns false at eof
 void UngetToken ();
 
 

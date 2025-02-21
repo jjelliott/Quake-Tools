@@ -31,13 +31,13 @@
  */
 
 #import <objc/objc.h>
-#import <dpsclient/dpsclient.h>
+#import <cairo/cairo.h>
 
 typedef struct _UP {
     float          *points;
     int             numberOfPoints;
     char           *ops;
-    NXPoint         cp;
+    NSPoint         cp;
     int             numberOfOps;
     int             max;
     float           bbox[4];
@@ -46,7 +46,7 @@ typedef struct _UP {
 } UserPath;
 
 /* UserPath functions */
-NXZone *userPathZone();
+NSZone *userPathZone();
 UserPath *newUserPath();
 void freeUserPath(UserPath *up);
 void debugUserPath(UserPath *up, BOOL shouldPing);
