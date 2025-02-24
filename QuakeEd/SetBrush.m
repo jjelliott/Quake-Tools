@@ -1040,12 +1040,12 @@ BOOL	fakebrush;
 	c = [map_i count];
 	for (i=0 ; i<c ; i++)
 	{
-		obj = [map_i objectAt: i];
+		obj = [map_i objectAtIndex: i];
 		targname = [obj valueForQKey: "targetname"];
 		if (strcmp (targ, targname))
 			continue;
 			
-		[[obj objectAt:0] getMins: min  maxs: max];
+		[[obj objectAtIndex:0] getMins: min  maxs: max];
 		dest[0] = (min[0] + max[0]) /2;
 		dest[1] = (min[1] + max[1]) /2;
 		
@@ -1125,10 +1125,10 @@ XYDrawSelf
 	[xyview_i addToScrollRange: bmins[0] : bmins[1]];
 	[xyview_i addToScrollRange: bmaxs[0] : bmaxs[1]];
 
-	worldent = [map_i objectAt: 0];
+	worldent = [map_i objectAtIndex: 0];
 	currentent = [map_i currentEntity];
 	
-	if (parent != worldent && self == [parent objectAt: 0])
+	if (parent != worldent && self == [parent objectAtIndex: 0])
 		keybrush = YES;
 	else
 		keybrush = NO;
@@ -1283,7 +1283,7 @@ CameraDrawSelf
 	if ([self fakeBrush: @selector(CameraDrawSelf)])
 		return self;
 	
-	worldent = [map_i objectAt: 0];
+	worldent = [map_i objectAtIndex: 0];
 	currentent = [map_i currentEntity];
 
 	if (parent != worldent && worldent == currentent)
@@ -1623,7 +1623,7 @@ Set the regioned flag based on if the object is containted in region_min/max
 	char	*name;
 	
 // filter away entities
-	if (parent != [map_i objectAt: 0])
+	if (parent != [map_i objectAtIndex: 0])
 	{
 		if (filter_entities)
 		{

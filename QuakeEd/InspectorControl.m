@@ -16,9 +16,9 @@ id		inspcontrol_i;
 		
 	currentInspectorType = -1;
 
-	contentList = [[List alloc] init];
-	windowList = [[List alloc] init];
-	itemList = [[List alloc] init];
+	contentList = [[NSMutableArray alloc] init];
+	windowList = [[NSMutableArray alloc] init];
+	itemList = [[NSMutableArray alloc] init];
 
 	// ADD NEW INSPECTORS HERE...
 
@@ -61,7 +61,7 @@ id		inspcontrol_i;
 
 	[inspectorView_i setAutoresizeSubviews:YES];
 
-	inspectorSubview_i = [contentList objectAt:i_project];
+	inspectorSubview_i = [contentList objectAtIndex:i_project];
 	[inspectorView_i addSubview:inspectorSubview_i];
 
 	currentInspectorType = -1;
@@ -98,21 +98,21 @@ id		inspcontrol_i;
 		return self;
 	
 	currentInspectorType = which;
-	newView = [contentList objectAt:which];
+	newView = [contentList objectAtIndex:which];
 	
-	cell = [itemList objectAt:which];	// set PopUpButton title
+	cell = [itemList objectAtIndex:which];	// set PopUpButton title
 	[popUpButton_i setTitle:[cell title]];
 	
 	[inspectorView_i replaceSubview:inspectorSubview_i with:newView];
 	[inspectorView_i getFrame:&r];
 	inspectorSubview_i = newView;
-	[inspectorSubview_i setAutosizing:NS_WIDTHSIZABLE | NS_HEIGHTSIZABLE];
+	[inspectorSubview_i setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	[inspectorSubview_i sizeTo:r.size.width - 4 :r.size.height - 4];
 	
 	[inspectorSubview_i lockFocus];
 	[inspectorSubview_i getBounds:&f];
-	PSsetgray(NS_LTGRAY);
-	NSRectFill(&f);
+	[[NSColor lightGrayColor] setFill];
+	NSRectFill(f);
 	[inspectorSubview_i unlockFocus];
 	[inspectorView_i display];
 	

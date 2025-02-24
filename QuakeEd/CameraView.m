@@ -505,55 +505,66 @@ drawSelf
 XYDrawSelf
 =============
 */
-- XYDrawSelf
-{
-	
-	PSsetrgbcolor (0,0,1.0);
-	PSsetlinewidth (0.15);
-	PSmoveto (origin[0]-16,origin[1]);
-	PSrlineto (16,8);
-	PSrlineto (16,-8);
-	PSrlineto (-16,-8);
-	PSrlineto (-16,8);
-	PSrlineto (32,0);
-	
-	PSmoveto (origin[0],origin[1]);
-	PSrlineto (64*cos(ya+M_PI/4), 64*sin(ya+M_PI/4));
-	PSmoveto (origin[0],origin[1]);
-	PSrlineto (64*cos(ya-M_PI/4), 64*sin(ya-M_PI/4));
-	
-	PSstroke ();
-	
+- XYDrawSelf {
+    [[NSColor blueColor] setStroke];
+    
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path setLineWidth:0.15];
+
+    // Draw the outlined diamond shape
+    [path moveToPoint:NSMakePoint(origin[0] - 16, origin[1])];
+    [path relativeLineToPoint:NSMakePoint(16, 8)];
+    [path relativeLineToPoint:NSMakePoint(16, -8)];
+    [path relativeLineToPoint:NSMakePoint(-16, -8)];
+    [path relativeLineToPoint:NSMakePoint(-16, 8)];
+    [path relativeLineToPoint:NSMakePoint(32, 0)];
+
+    // Draw the two angled lines
+    [path moveToPoint:NSMakePoint(origin[0], origin[1])];
+    [path lineToPoint:NSMakePoint(origin[0] + 64 * cos(ya + M_PI / 4),
+                                  origin[1] + 64 * sin(ya + M_PI / 4))];
+
+    [path moveToPoint:NSMakePoint(origin[0], origin[1])];
+    [path lineToPoint:NSMakePoint(origin[0] + 64 * cos(ya - M_PI / 4),
+                                  origin[1] + 64 * sin(ya - M_PI / 4))];
+
+    // Stroke the path
+    [path stroke];
 	return self;
 }
+
 
 /*
 =============
 ZDrawSelf
 =============
 */
-- ZDrawSelf
-{
-	PSsetrgbcolor (0,0,1.0);
-	PSsetlinewidth (0.15);
-	
-	PSmoveto (-16,origin[2]);
-	PSrlineto (16,8);
-	PSrlineto (16,-8);
-	PSrlineto (-16,-8);
-	PSrlineto (-16,8);
-	PSrlineto (32,0);
-	
-	PSmoveto (-15,origin[2]-47);
-	PSrlineto (29,0);
-	PSrlineto (0,54);
-	PSrlineto (-29,0);
-	PSrlineto (0,-54);
+- ZDrawSelf {
+    [[NSColor blueColor] setStroke];
 
-	PSstroke ();
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path setLineWidth:0.15];
 
+    // Draw the outlined diamond shape
+    [path moveToPoint:NSMakePoint(-16, origin[2])];
+    [path relativeLineToPoint:NSMakePoint(16, 8)];
+    [path relativeLineToPoint:NSMakePoint(16, -8)];
+    [path relativeLineToPoint:NSMakePoint(-16, -8)];
+    [path relativeLineToPoint:NSMakePoint(-16, 8)];
+    [path relativeLineToPoint:NSMakePoint(32, 0)];
+
+    // Draw the parallelogram shape below
+    [path moveToPoint:NSMakePoint(-15, origin[2] - 47)];
+    [path relativeLineToPoint:NSMakePoint(29, 0)];
+    [path relativeLineToPoint:NSMakePoint(0, 54)];
+    [path relativeLineToPoint:NSMakePoint(-29, 0)];
+    [path relativeLineToPoint:NSMakePoint(0, -54)];
+
+    // Stroke the path
+    [path stroke];
 	return self;
 }
+
 
 
 /*
@@ -608,7 +619,7 @@ modalMoveLoop
 		//
 		// if command is down, look towards brush or entity
 		//
-		if (event->flags & NS_SHIFTMASK)
+		if (event->flags & NSShiftKeyMask)
 		{
 			ent = [quakemap_i selectedEntity];
 			if (ent)
@@ -665,7 +676,7 @@ XYmouseDown
 		return NO;
 	
 #if 0	
-	if (flags & NS_ALTERNATEMASK)
+	if (flags & NSAlternateKeyMask)
 	{	// up / down drag
 		movemod[0] = 0;
 		movemod[1] = 0;
@@ -726,13 +737,13 @@ viewDrag:
 //
 	goto drawentry;
 
-	while (event->type != NS_RMOUSEUP)
+	while ([event type] != NSRightMouseUp)
 	{
 		//
 		// calculate new point
 		//
-		newpt = event->location;
-		[self convertPoint:&newpt  fromView:NULL];
+		newpt = [event locationInWindow];
+		[self convertPoint:newpt  fromView:NULL];
 
 		dx = newpt.x - pt->x;
 		dy = newpt.y - pt->y;
@@ -747,15 +758,18 @@ drawentry:
 		[quakeed_i newinstance];
 		[self display];
 		
-		event = [NSApp getNextEvent: 
-			NS_KEYDOWNMASK | NS_RMOUSEUPMASK | NS_RMOUSEDRAGGEDMASK];
-	
-		if (event->type == NS_KEYDOWN)
-		{
-			[self _keyDown: event];
-			[self display];
-			goto drawentry;
-		}
+		event = [NSApp nextEventMatchingMask: (1 << NSKeyDown) | (1 << NSRightMouseUp) | (1 << NSRightMouseDragged)
+                          untilDate: [NSDate distantFuture]
+                             inMode: NSDefaultRunLoopMode
+                            dequeue: YES];
+
+if ([event type] == NSKeyDown)
+{
+	[self _keyDown: event];
+	[self display];
+	goto drawentry;
+}
+
 		
 	}
 
@@ -778,9 +792,9 @@ mouseDown
 	float			forward, right, up;
 	int				flags;
 		
-	pt = theEvent->location;
+	pt = theEvent.locationInWindow;
 	
-	[self convertPoint:&pt  fromView:NULL];
+	[self convertPoint:pt  fromView:NULL];
 
 	VectorCopy (origin, p1);
 	forward = 160;
@@ -791,7 +805,7 @@ mouseDown
 	for (i=0 ; i<3 ; i++)
 		p2[i] = p1[i] + 100*p2[i];
 
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent.modifierFlags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask); 
 
 //
 // bare click to select a texture
@@ -805,7 +819,7 @@ mouseDown
 //
 // shift click to select / deselect a brush from the world
 //
-	if (flags == NS_SHIFTMASK)
+	if (flags == NSShiftKeyMask)
 	{		
 		[map_i selectRay: p1 : p2 : NO];
 		return self;
@@ -815,7 +829,7 @@ mouseDown
 //
 // cmd-shift click to set a target/targetname entity connection
 //
-	if (flags == (NS_SHIFTMASK|NS_COMMANDMASK) )
+	if (flags == (NSShiftKeyMask|NSCommandKeyMask) )
 	{
 		[map_i entityConnect: p1 : p2];
 		return self;
@@ -824,7 +838,7 @@ mouseDown
 //
 // alt click = set entire brush texture
 //
-	if (flags == NS_ALTERNATEMASK)
+	if (flags == NSAlternateKeyMask)
 	{
 		if (drawmode != dr_texture)
 		{
@@ -840,7 +854,7 @@ mouseDown
 //
 // ctrl-alt click = set single face texture
 //
-	if (flags == (NS_CONTROLMASK | NS_ALTERNATEMASK) )
+	if (flags == (NSControlKeyMask | NSAlternateKeyMask) )
 	{
 		if (drawmode != dr_texture)
 		{
@@ -870,11 +884,11 @@ rightMouseDown
 	NSPoint			pt;
 	int				flags;
 		
-	pt = theEvent->location;
+	pt = theEvent.locationInWindow;
 	
-	[self convertPoint:&pt  fromView:NULL];
+	[self convertPoint:pt  fromView:NULL];
 
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent.modifierFlags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
 
 //
 // click = drag camera
@@ -909,7 +923,10 @@ keyDown
 {
     int	ch;
 	
-    ch = tolower(theEvent->data.key.charCode);
+    NSString *characters = [theEvent charactersIgnoringModifiers];
+	if ([characters length] > 0) {
+    	ch = tolower([characters characterAtIndex:0]); // ✅ Correct way
+	}
 	
 	switch (ch)
 	{

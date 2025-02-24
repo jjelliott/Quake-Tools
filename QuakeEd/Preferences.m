@@ -8,7 +8,9 @@ id	preferences_i;
 float		lightaxis[3] = {1, 0.6, 0.75};
 
 @implementation Preferences
-
+id NSGetDefaultValue(char * defowner, char *key) {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:key]];
+}
 - init
 {
 	[super init];
@@ -35,11 +37,15 @@ void WriteNumericDefault (char *name, float value)
 	char	str[128];
 	
 	sprintf (str,"%f", value);
-	NSWriteDefault (DEFOWNER, name, str);
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setObject:[NSString stringWithUTF8String:str] forKey:[NSString stringWithUTF8String:name]];
+	[defaults synchronize];  // Optionally call synchronize, though it's usually not necessary.
 }
 void WriteStringDefault (char *name, char *value)
 {
-	NSWriteDefault (DEFOWNER, name, value);
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+[defaults setObject:[NSString stringWithUTF8String:value] forKey:[NSString stringWithUTF8String:name]];
+[defaults synchronize];  // Optionally call synchronize, though it's usually not necessary.
 }
 
 //
@@ -83,14 +89,14 @@ void WriteStringDefault (char *name, char *value)
 	if (!path)
 		path = "";
 	strcpy (projectpath, path);
-	[startproject_i setStringValue: path];
+	[startproject_i setStringValue: [NSString stringWithUTF8String:path]];
 	WriteStringDefault ("ProjectPath", path);
 	return self;
 }
 
 - setCurrentProject:sender
 {
-	[startproject_i setStringValue: [project_i currentProjectFile]];
+	[startproject_i setStringValue: [NSString stringWithUTF8String:[project_i currentProjectFile]]];
 	[self UIChanged: self];
 	return self;
 }
@@ -116,20 +122,26 @@ void WriteStringDefault (char *name, char *value)
 	char	**filename;
 	char	path[1024], file[64];
 	
-	panel = [OpenPanel new];
+	panel = [NSOpenPanel new];
 
 	ExtractFilePath (bspSound, path);
 	ExtractFileBase (bspSound, file);
-	
+	int numTypes = sizeof(types) / sizeof(types[0]);
+
+	NSMutableArray *typesArray = [NSMutableArray array];
+	int i;
+	for ( i = 0; i < numTypes; i++) {
+ 	   [typesArray addObject:[NSString stringWithUTF8String:types[i]]];
+	}
 	rtn = [panel 
-			runModalForDirectory:path 
-			file: file
-			types: types];
+			runModalForDirectory:[NSString stringWithUTF8String:path] 
+			file: [NSString stringWithUTF8String:file]
+			types: typesArray];
 
 	if (rtn)
 	{
 		filename = (char **)[panel filenames];
-		strcpy(bspSound,[panel directory]);
+		strcpy(bspSound,[[panel directory] UTF8String]);
 		strcat(bspSound,"/");
 		strcat(bspSound,filename[0]);
 		[self setBspSoundPath:bspSound];
@@ -161,14 +173,14 @@ void WriteStringDefault (char *name, char *value)
 
 	if (bspSound_i)
 		[bspSound_i free];
-	bspSound_i = [[Sound alloc] initFromSoundfile:bspSound];
+	bspSound_i = [[NSSound alloc] initWithContentsOfFile:[NSString stringWithUTF8String:bspSound]];
 	if (!bspSound_i)
 	{
 		strcpy (bspSound, "/NextLibrary/Sounds/Funk.snd");
-		bspSound_i = [[Sound alloc] initFromSoundfile:bspSound];
+		bspSound_i = [[NSSound alloc] initWithContentsOfFile:[NSString stringWithUTF8String:bspSound]];
 	}
 
-	[bspSoundField_i setStringValue:bspSound];
+	[bspSoundField_i setStringValue:[NSString stringWithUTF8String:bspSound]];
 	
 	WriteStringDefault ("BspSoundPath", bspSound);
 	

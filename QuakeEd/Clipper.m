@@ -182,46 +182,57 @@ XYDrag
 	return self;
 }
 
-- XYDrawSelf
-{
-	int		i;
-	char	text[8];
-	
-	PSsetrgbcolor (1,0.5,0);
-	PSselectfont("Helvetica-Medium",10/[xyview_i currentScale]);
-	PSrotate(0);
+- XYDrawSelf {
+    int i;
+    
+    [[NSColor colorWithCalibratedRed:1.0 green:0.5 blue:0.0 alpha:1.0] setStroke]; // Orange color
 
-	for (i=0 ; i<num ; i++)
-	{
-		PSmoveto (pos[i][0]-4, pos[i][1]-4);
-		sprintf (text, "%i", i);
-		PSshow (text);
-		PSstroke ();
-		PSarc ( pos[i][0], pos[i][1], 10, 0, 360);
-		PSstroke ();
-	}
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSFont fontWithName:@"Helvetica-Medium" size:(10 / [xyview_i currentScale])], NSFontAttributeName,
+        [NSColor blackColor], NSForegroundColorAttributeName,
+        nil];
+
+    for (i = 0; i < num; i++) {
+        NSString *text = [NSString stringWithFormat:@"%i", i];
+
+        // Draw the text at position (adjusted to fit the number properly)
+        NSPoint textPoint = NSMakePoint(pos[i][0] - 4, pos[i][1] - 4);
+        [text drawAtPoint:textPoint withAttributes:attributes];
+
+        // Draw a circle at each position
+        NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:
+            NSMakeRect(pos[i][0] - 10, pos[i][1] - 10, 20, 20)];
+        [circle stroke];
+    }
 	return self;
 }
 
-- ZDrawSelf
-{
-	int		i;
-	char	text[8];
-	
-	PSsetrgbcolor (1,0.5,0);
-	PSselectfont("Helvetica-Medium",10/[zview_i currentScale]);
-	PSrotate(0);
 
-	for (i=0 ; i<num ; i++)
-	{
-		PSmoveto (-28+i*8 - 4, pos[i][2]-4);
-		sprintf (text, "%i", i);
-		PSshow (text);
-		PSstroke ();
-		PSarc ( -28+i*8, pos[i][2], 10, 0, 360);
-		PSstroke ();
-	}
+
+- ZDrawSelf {
+    int i;
+    
+    [[NSColor colorWithCalibratedRed:1.0 green:0.5 blue:0.0 alpha:1.0] setStroke]; // Orange color
+
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSFont fontWithName:@"Helvetica-Medium" size:(10 / [zview_i currentScale])], NSFontAttributeName,
+        [NSColor blackColor], NSForegroundColorAttributeName,
+        nil];
+
+    for (i = 0; i < num; i++) {
+        NSString *text = [NSString stringWithFormat:@"%i", i];
+
+        // Draw the text at position (adjusted to fit properly)
+        NSPoint textPoint = NSMakePoint(-28 + i * 8 - 4, pos[i][2] - 4);
+        [text drawAtPoint:textPoint withAttributes:attributes];
+
+        // Draw a circle at each position
+        NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:
+            NSMakeRect(-28 + i * 8 - 10, pos[i][2] - 10, 20, 20)];
+        [circle stroke];
+    }
 	return self;
 }
+
 
 @end

@@ -13,7 +13,7 @@ Initizes a scroll view with a button at it's lower right corner
 
 - initFrame:(const NSRect *)frameRect button1:b1 button2:b2
 {
-	[super  initFrame: frameRect];	
+	[super  initWithFrame: *frameRect];	
 
 	[self addSubview: b1];
 	[self addSubview: b2];
@@ -21,10 +21,10 @@ Initizes a scroll view with a button at it's lower right corner
 	button1 = b1;
 	button2 = b2;
 
-	[self setHorizScrollerRequired: YES];
-	[self setVertScrollerRequired: YES];
+	[self setHasHorizontalScroller: YES];
+	[self setHasVerticalScroller: YES];
 
-	[self setBorderType: NS_BEZEL];
+	[self setBorderType: NSBezelBorder];
 		
 	return self;
 }
@@ -43,34 +43,35 @@ Adjust the size for the pop up scale menu
 	NSRect	scrollerframe;
 	NSRect	buttonframe, buttonframe2;
 	NSRect	newframe;
-	
+	NSScroller *hScroller = [[self horizontalScroller] retain];
+	NSRect frame = [self frame];  
 	[super tile];
-	[button1 getFrame: &buttonframe];
-	[button2 getFrame: &buttonframe2];
-	[hScroller getFrame: &scrollerframe];
-
+	buttonframe = [button1 frame];
+	buttonframe2 = [button2 frame];
+	scrollerframe = [hScroller frame];
+	
 	newframe.origin.y = scrollerframe.origin.y;
 	newframe.origin.x = frame.size.width - buttonframe.size.width;
 	newframe.size.width = buttonframe.size.width;
 	newframe.size.height = scrollerframe.size.height;
 	scrollerframe.size.width -= newframe.size.width;
-	[button1 setFrame: &newframe];
+	[button1 setFrame: newframe];
 	newframe.size.width = buttonframe2.size.width;
 	newframe.origin.x -= newframe.size.width;
-	[button2 setFrame: &newframe];
+	[button2 setFrame: newframe];
 	scrollerframe.size.width -= newframe.size.width;
 
-	[hScroller setFrame: &scrollerframe];
+	[hScroller setFrame: scrollerframe];
 
 	return self;
 }
 
 
-- superviewSizeChanged:(const NSSize *)oldSize
+- resizeSubviewsWithOldSize:(const NSSize *)oldSize
 {
-	[super superviewSizeChanged: oldSize];
+	[super resizeSubviewsWithOldSize: *oldSize];
 	
-	[[self docView] newSuperBounds];
+	[[self documentView] newSuperBounds];
 	
 	return self;
 }

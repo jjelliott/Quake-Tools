@@ -672,11 +672,11 @@ drawWire
 	c = [map_i count];
 	for (i=0 ; i<c ; i++)
 	{
-		ent = [map_i objectAt: i];
+		ent = [map_i objectAtIndex: i];
 		c2 = [ent count];
 		for (j = c2-1 ; j >=0 ; j--)
 		{
-			brush = [ent objectAt: j];
+			brush = [ent objectAtIndex: j];
 			if ( [brush selected] )
 				continue;
 			if ([brush regioned])
@@ -685,7 +685,7 @@ drawWire
 		}
 		if (i > 0 && drawnames)
 		{	// draw entity names
-			brush = [ent objectAt: 0];
+			brush = [ent objectAtIndex: 0];
 			if (![brush regioned])
 			{
 				[brush getMins: mins maxs: maxs];
@@ -1211,12 +1211,12 @@ mouseDown
 	p1[2] = xy_viewnormal[2] * -4096;
 	p2[2] = xy_viewnormal[2] * 4096;
 
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent->flags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
 	
 //
 // shift click to select / deselect a brush from the world
 //
-	if (flags == NS_SHIFTMASK)
+	if (flags == NSShiftKeyMask)
 	{		
 		[map_i selectRay: p1 : p2 : YES];
 		return self;
@@ -1225,7 +1225,7 @@ mouseDown
 //
 // cmd-shift click to set a target/targetname entity connection
 //
-	if (flags == (NS_SHIFTMASK|NS_COMMANDMASK) )
+	if (flags == (NSShiftKeyMask|NSCommandKeyMask) )
 	{
 		[map_i entityConnect: p1 : p2];
 		return self;
@@ -1279,7 +1279,7 @@ mouseDown
 //
 // control click = position and drag camera 
 //
-	if (flags == NS_CONTROLMASK)
+	if (flags == NSControlKeyMask)
 	{
 		[cameraview_i setXYOrigin: &pt];
 		[quakeed_i newinstance];
@@ -1292,7 +1292,7 @@ mouseDown
 //
 // command click = drag Z checker
 //
-	if (flags == NS_COMMANDMASK)
+	if (flags == NSCommandKeyMask)
 	{
 // check single plane dragging
 [self shearDragFrom: theEvent];
@@ -1309,7 +1309,7 @@ return self;
 //
 // alt click = set entire brush texture
 //
-	if (flags == NS_ALTERNATEMASK)
+	if (flags == NSAlternateKeyMask)
 	{
 		if (drawmode != dr_texture)
 		{
@@ -1325,7 +1325,7 @@ return self;
 //
 // ctrl-alt click = set single face texture
 //
-	if (flags == (NS_CONTROLMASK | NS_ALTERNATEMASK) )
+	if (flags == (NSControlKeyMask | NSAlternateKeyMask) )
 	{
 		if (drawmode != dr_texture)
 		{
@@ -1356,19 +1356,19 @@ rightMouseDown
 	pt= theEvent->location;
 	[self convertPoint:&pt  fromView:NULL];
 
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent->flags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
 
-	if (flags == NS_COMMANDMASK)
+	if (flags == NSCommandKeyMask)
 	{
 		return [self scrollDragFrom: theEvent];		
 	}
 
-	if (flags == NS_ALTERNATEMASK)
+	if (flags == NSAlternateKeyMask)
 	{
 		return [clipper_i XYClick: pt];
 	}
 	
-	if (flags == 0 || flags == NS_CONTROLMASK)
+	if (flags == 0 || flags == NSControlKeyMask)
 	{
 		return [self directionDragFrom: theEvent];
 	}

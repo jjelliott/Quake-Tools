@@ -778,11 +778,11 @@ qtexture_t *TEX_ForName (char *name)
 		for (i = 0;i < max; i++)
 			[self setDisplayFlag:i to:0];
 
-		brushes = [map_i objectAt:0];
+		brushes = [map_i objectAtIndex:0];
 		max = [brushes count];
 		for (i = 0;i < max; i++)
 		{
-			b = (SetBrush *)[brushes objectAt:i];
+			b = (SetBrush *)[brushes objectAtIndex:i];
 			numfaces = [b getNumBrushFaces];
 			for (j = 0; j < numfaces; j++)
 			{

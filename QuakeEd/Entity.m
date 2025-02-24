@@ -58,9 +58,9 @@ vec3_t bad_maxs = {8, 8, 8};
 			[new setKey: e->key toValue: e->value];
 	}
 
-	for (i=0 ; i<numElements ; i++)
+	for (i=0 ; i<[self count] ; i++)
 	{
-		nb = [[self objectAt: i] copy];
+		nb = [[self objectAtIndex: i] copy];
 		[nb setParent: new];
 		[new addObject: nb];
 	}
@@ -116,8 +116,9 @@ vec3_t bad_maxs = {8, 8, 8};
 	{
 		n = e->next;
 		free (e);
-	}
-	return [super free];
+	} 
+
+	return self;
 }
 
 - (BOOL)modifiable
@@ -133,11 +134,11 @@ vec3_t bad_maxs = {8, 8, 8};
 
 - removeObject: o
 {
-	o = [super removeObject: o];
-	if (numElements)
+	[super removeObject: o];
+	if ([self count])
 		return o;
 // the entity is empty, so remove the entire thing
-	if ( self == [map_i objectAt: 0])
+	if ( self == [map_i objectAtIndex: 0])
 		return o;	// never remove the world
 		
 	[map_i removeObject: self];
@@ -287,7 +288,7 @@ If the entity does not have a "targetname" key, a unique one is generated
 	maxt = 0;
 	for (i=1 ; i<count ; i++)
 	{
-		ent = [map_i objectAt: i];
+		ent = [map_i objectAtIndex: i];
 		t = [ent valueForQKey: "targetname"];
 		if (!t || t[0] != 't')
 			continue;
@@ -368,7 +369,7 @@ int	nument;
 	if ([self count] && esize != esize_model)
 	{
 		printf ("WARNING:Entity with brushes and wrong model type\n"); 
-		[self empty];
+		[self removeAllObjects];
 	}
 	
 	if (![self count] && esize == esize_model)
@@ -397,7 +398,7 @@ int	nument;
 	c = [self count];
 	for (i=0 ; i<c ; i++)
 	{
-		brush = [self objectAt: i];
+		brush = [self objectAtIndex: i];
 		[brush setEntityColor: color];
 	}
 	
@@ -426,8 +427,8 @@ int	nument;
 			sprintf (value, "%i", (int)([cameraview_i yawAngle]*180/M_PI));
 			[self setKey: "angle" toValue: value];
 		}
-		else if ( self != [map_i objectAt: 0] 
-		&& [[self objectAt: 0] regioned] )
+		else if ( self != [map_i objectAtIndex: 0] 
+		&& [[self objectAtIndex: 0] regioned] )
 			return self;	// skip the entire entity definition
 	}
 	
@@ -436,7 +437,7 @@ int	nument;
 // set an origin epair
 	if (!modifiable)
 	{
-		[[self objectAt: 0] getMins: mins maxs: maxs];
+		[[self objectAtIndex: 0] getMins: mins maxs: maxs];
 		if (temporg)
 		{
 			[cameraview_i getOrigin: mins];
@@ -462,8 +463,8 @@ int	nument;
 // fixed size entities don't save out brushes
 	if ( modifiable )
 	{
-		for (i=0 ; i<numElements ; i++)
-			[[self objectAt: i] writeToFILE: f region: reg];
+		for (i=0 ; i<[self count] ; i++)
+			[[self objectAtIndex: i] writeToFILE: f region: reg];
 	}
 	
 	fprintf (f,"}\n");

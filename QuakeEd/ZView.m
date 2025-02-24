@@ -693,12 +693,12 @@ mouseDown
 	p1[1] = origin[1];
 	p1[2] = pt.y;
 	
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent->flags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
 
 //
 // shift click to select / deselect a brush from the world
 //
-	if (flags == NS_SHIFTMASK)
+	if (flags == NSShiftKeyMask)
 	{		
 		[map_i selectRay: p1 : p1 : NO];
 		return self;
@@ -707,7 +707,7 @@ mouseDown
 //
 // alt click = set entire brush texture
 //
-	if (flags == NS_ALTERNATEMASK)
+	if (flags == NSAlternateKeyMask)
 	{
 		[map_i setTextureRay: p1 : p1 : YES];
 		return self;
@@ -716,7 +716,7 @@ mouseDown
 //
 // control click = position view
 //
-	if (flags == NS_CONTROLMASK)
+	if (flags == NSControlKeyMask)
 	{
 		[cameraview_i setZOrigin: pt.y];
 		[quakeed_i updateAll];
@@ -764,7 +764,7 @@ rightMouseDown
 	pt= theEvent->location;
 	[self convertPoint:&pt  fromView:NULL];
 
-	flags = theEvent->flags & (NS_SHIFTMASK | NS_CONTROLMASK | NS_ALTERNATEMASK | NS_COMMANDMASK);
+	flags = theEvent->flags & (NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask);
 
 	
 //

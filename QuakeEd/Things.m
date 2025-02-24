@@ -37,7 +37,7 @@ id	things_i;
 	
 	[[EntityClassList alloc] initForSourceDirectory: path];
 
-	[self loadEntityComment:[entity_classes_i objectAt:lastSelected]];
+	[self loadEntityComment:[entity_classes_i objectAtIndex:lastSelected]];
 	[entity_browser_i loadColumnZero];
 	[[entity_browser_i matrixInColumn:0] selectCellAt:lastSelected :0];
 
@@ -52,7 +52,7 @@ id	things_i;
 	
 	matr = [sender matrixInColumn: 0];
 	lastSelected = [matr selectedRow];
-	[self loadEntityComment:[entity_classes_i objectAt:lastSelected]];
+	[self loadEntityComment:[entity_classes_i objectAtIndex:lastSelected]];
 	[quakeed_i makeFirstResponder: quakeed_i];
 	
 	return self;
@@ -67,7 +67,7 @@ id	things_i;
 
 - (char *)spawnName
 {
-	return [[entity_classes_i objectAt:lastSelected] classname];
+	return [[entity_classes_i objectAtIndex:lastSelected] classname];
 }
 
 
@@ -94,8 +94,8 @@ id	things_i;
 	[[EntityClassList alloc] initForSourceDirectory: path];
 
 	lastSelected = 0;
-	ent = [entity_classes_i objectAt:lastSelected];
-	[self loadEntityComment:[entity_classes_i objectAt:lastSelected]];
+	ent = [entity_classes_i objectAtIndex:lastSelected];
+	[self loadEntityComment:[entity_classes_i objectAtIndex:lastSelected]];
 
 	[entity_browser_i loadColumnZero];
 	[[entity_browser_i matrixInColumn:0] selectCellAt:lastSelected :0];
@@ -136,7 +136,7 @@ id	things_i;
 	
 	ent = [map_i currentEntity];
 	classname = [ent valueForQKey: "classname"];
-	if (ent != [map_i objectAt: 0])
+	if (ent != [map_i objectAtIndex: 0])
 		[self selectClass: classname];	// don't reset for world
 	classent = [entity_classes_i classForName:classname];
 	flagname = [ent valueForQKey: "spawnflags"];
@@ -304,7 +304,7 @@ id	things_i;
 	i = 0;
 	while(max--)
 	{
-		object = [entity_classes_i objectAt:i];
+		object = [entity_classes_i objectAtIndex:i];
 		[matrix addRow];
 		cell = [matrix cellAt:i++ :0];
 		[cell setStringValue:[object classname]];

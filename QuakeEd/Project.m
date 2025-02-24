@@ -40,7 +40,7 @@ id	project_i;
 	strcpy(path_finalmapdir,s);
 	strcat(path_finalmapdir,"/"SUBDIR_MAPS);	// dest dir
 	
-	[basepathinfo_i	setStringValue:s];		// in Project Inspector
+	[basepathinfo_i	setStringValue:[NSString stringWithUTF8String:s]];		// in Project Inspector
 	
 	#if 0
 	if ((s = [projectInfo getStringFor:BASEPATHKEY]))
@@ -114,12 +114,12 @@ id	project_i;
 //
 - initProjSettings
 {
-	[pis_basepath_i	setStringValue:path_basepath];
-	[pis_fullvis_i	setStringValue:string_fullvis];
-	[pis_fastvis_i	setStringValue:string_fastvis];
-	[pis_novis_i	setStringValue:string_novis];
-	[pis_relight_i	setStringValue:string_relight];
-	[pis_leaktest_i	setStringValue:string_leaktest];
+	[pis_basepath_i	setStringValue:[NSString stringWithUTF8String:path_basepath]];
+	[pis_fullvis_i	setStringValue:[NSString stringWithUTF8String:string_fullvis]];
+	[pis_fastvis_i	setStringValue:[NSString stringWithUTF8String:string_fastvis]];
+	[pis_novis_i	setStringValue:[NSString stringWithUTF8String:string_novis]];
+	[pis_relight_i	setStringValue:[NSString stringWithUTF8String:string_relight]];
+	[pis_leaktest_i	setStringValue:[NSString stringWithUTF8String:string_leaktest]];
 	
 	return self;
 }
@@ -273,7 +273,7 @@ id	project_i;
 
 // update the texture inspector
 	[texturepalette_i initPaletteFromWadfile:wf ];
-	[[map_i objectAt: 0] setKey:"wad" toValue: wf];
+	[[map_i objectAtIndex: 0] setKey:"wad" toValue: wf];
 //	[inspcontrol_i changeInspectorTo:i_textures];
 
 	[quakeed_i updateAll];

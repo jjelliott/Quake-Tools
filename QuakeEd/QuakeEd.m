@@ -857,7 +857,7 @@ saveAs
 	if ([clipper_i hide])	// first click hides clipper only
 		return [self updateAll];
 
-	[map_i setCurrentEntity: [map_i objectAt: 0]];	// make world selected
+	[map_i setCurrentEntity: [map_i objectAtIndex: 0]];	// make world selected
 	[map_i makeSelectedPerform: @selector(deselect)];
 	[self updateAll];
 	

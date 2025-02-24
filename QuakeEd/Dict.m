@@ -5,9 +5,7 @@
 
 - init
 {
-	[super	initCount:0
-		elementSize:sizeof(dict_t)
-		description:NULL];
+	self = [super init];
 	return self;	
 }
 
@@ -16,9 +14,9 @@
 	int	i;
 	dict_t	*d;
 	
-	for (i=0 ; i<numElements ; i++)
+	for (i=0 ; i<[self count] ; i++)
 	{
-		d = [self elementAt: i];
+		d = (dict_t *)[self objectAtIndex: i];
 		printf ("%s : %s\n",d->key, d->value);
 	}
 	return self;
@@ -38,10 +36,10 @@ JDC
 	dict_t	*d;
 	char	*old;
 	
-	new = [super copyFromZone: zone];
-	for (i=0 ; i<numElements ; i++)
+	new = [super mutableCopy];
+	for (i=0 ; i<[self count] ; i++)
 	{
-		d = [self elementAt: i];
+		d = (dict_t *)[self objectAtIndex: i];
 		old = d->key;
 		d->key = malloc(strlen(old)+1);	
 		strcpy (d->key, old);
@@ -79,7 +77,7 @@ JDC
 	max = [super count];
 	for (i = 0;i < max;i++)
 	{
-		d = [super elementAt:i];
+		d = (dict_t *)[super objectAtIndex:i];
 		fprintf(fp,"\t{\"%s\"\t\"%s\"}\n",d->key,d->value);
 	}
 	fprintf(fp,"}\n");
@@ -130,7 +128,7 @@ JDC
 	max = [super count];
 	for (i = 0;i < max;i++)
 	{
-		d = [super elementAt:i];
+		d = (dict_t *)[super objectAtIndex:i];
 		if (!strcmp(d->key,key))
 			return d;
 	}
@@ -159,7 +157,9 @@ JDC
 		strcpy(newd.key,key);
 		newd.value = malloc(strlen(value)+1);
 		strcpy(newd.value,value);
-		[self addElement:&newd];
+		
+NSValue *wrappedValue = [NSValue valueWithBytes:&newd objCType:@encode(dict_t)];
+[self addObject:wrappedValue];         
 	}
 	return self;
 }
@@ -222,7 +222,7 @@ JDC
 	tempstr[0] = 0;
 	for (i = 0;i < max;i++)
 	{
-		s = [list elementAt:i];
+		s = (char *)[list objectAtIndex:i];
 		strcat(tempstr,s);
 		strcat(tempstr,"  ");
 	}
@@ -242,7 +242,21 @@ JDC
 	d = [self findKeyword:key];
 	if (d == NULL)
 		return self;
-	[self removeElementAt:d - (dict_t*)dataPtr];
+	NSUInteger index = NSNotFound;
+	NSUInteger i;
+for (i = 0; i < self.count; i++) {
+    dict_t *stored = (dict_t*)[self objectAtIndex:i];
+    if (memcmp(stored, d, sizeof(dict_t)) == 0) {
+        index = i;
+        break;
+    }
+}
+
+if (index != NSNotFound) {
+    [self removeObjectAtIndex:index]; // Remove the element
+}
+
+
 	return self;
 }
 
@@ -264,10 +278,10 @@ JDC
 	count = [temp count];
 	for (i = 0;i < count;i++)
 	{
-		s = [temp elementAt:i];
+		s = (char*)[temp objectAtIndex:i];
 		if (!strcmp(s,string))
 		{
-			[temp removeElementAt:i];
+			[temp removeObjectAtIndex:i];
 			free(d->value);
 			d->value = [self convertListToString:temp];
 			[temp free];
@@ -346,17 +360,14 @@ char	item[4096];
 	if (s == NULL)
 		return NULL;
 		
-	stuff = [[Storage alloc]
-			initCount:0
-			elementSize:ITEMSIZE
-			description:NULL];
+	stuff = [[NSMutableArray alloc] init];
 			
 	[self setupMultiple:s];
 	while((s = [self getNextParameter]))
 	{
 		bzero(string,ITEMSIZE);
 		strcpy(string,s);
-		[stuff addElement:string];
+		[stuff addObject:[NSString stringWithUTF8String:string]];
 	}
 	
 	return stuff;
@@ -410,8 +421,8 @@ char	item[4096];
 		CopyUntilQuote(fp,string);
 		pair.value = malloc(strlen(string)+1);
 		strcpy(pair.value,string);
-		
-		[super addElement:&pair];
+		NSValue *wrappedValue = [NSValue valueWithBytes:&pair objCType:@encode(dict_t)];
+		[self addObject:wrappedValue];
 		c = FindBrace(fp);
 	}
 	
