@@ -127,32 +127,37 @@ id	project_i;
 //
 //	Add text to the BSP Output window
 //
-- addToOutput:(char *)string
-{
-	int	end;
-	
-	end = [BSPoutput_i textLength];
-	[BSPoutput_i setSel:end :end];
-	[BSPoutput_i replaceSel:string];
-	
-	end = [BSPoutput_i textLength];
-	[BSPoutput_i setSel:end :end];
-	[BSPoutput_i scrollSelToVisible];
-	
+- addToOutput:(const char *)string {
+    NSString *newText = [NSString stringWithUTF8String:string];
+    NSTextView *textView = (NSTextView *)BSPoutput_i; // Ensure BSPoutput_i is an NSTextView
+
+    // Get the current length of the text
+    NSUInteger end = [[textView string] length];
+
+    // Move cursor to the end of the text
+    NSRange endRange = NSMakeRange(end, 0);
+    [textView setSelectedRange:endRange];
+
+    // Insert the new string
+    [[textView textStorage] replaceCharactersInRange:endRange withString:newText];
+
+    // Scroll to make sure new text is visible
+    [textView scrollRangeToVisible:NSMakeRange([[textView string] length], 0)];
 	return self;
 }
 
+
 - clearBspOutput:sender
 {
-	[BSPoutput_i	selectAll:self];
-	[BSPoutput_i	replaceSel:"\0"];
+	[BSPoutput_i setString:@""];
 	
 	return self;
 }
 
 - print
 {
-	[BSPoutput_i	printPSCode:self];
+	NSPrintOperation *printOp = [NSPrintOperation printOperationWithView:BSPoutput_i];
+	[printOp runOperation];
 	return self;
 }
 
@@ -163,9 +168,9 @@ id	project_i;
 	if (projectInfo == NULL)
 		return self;
 	[self initVars];
-	[mapbrowse_i reuseColumns:YES];
+	[mapbrowse_i setReusesColumns:YES];
 	[mapbrowse_i loadColumnZero];
-	[pis_wads_i reuseColumns:YES];
+	[pis_wads_i setReusesColumns:YES];
 	[pis_wads_i loadColumnZero];
 
 	[things_i		initEntities];
@@ -185,7 +190,7 @@ id	project_i;
 	max = [obj count];
 	for (i = 0;i < max;i++)
 	{
-		string = [obj elementAt:i];
+		string = (char *) [obj objectAtIndex:i];
 		changeString(f,t,string);
 	}
 	return self;
@@ -215,10 +220,10 @@ id	project_i;
 	max = [list count];
 	for (i = 0 ; i<max ; i++)
 	{
-		name = [list elementAt:i];
+		name = (char *)[list objectAtIndex:i];
 		[matrix addRow];
-		cell = [matrix cellAt:i :0];
-		[cell setStringValue:name];
+		cell = [matrix cellAtRow:i column:0];
+		[cell setStringValue:[NSString stringWithUTF8String:name]];
 		[cell setLeaf:YES];
 		[cell setLoaded:YES];
 	}
@@ -238,20 +243,31 @@ id	project_i;
 	matrix = [sender matrixInColumn:0];
 	row = [matrix selectedRow];
 	sprintf(fname,"%s/%s.map",path_mapdirectory,
-		(char *)[mapList elementAt:row]);
+		(char *)[mapList objectAtIndex:row]);
 	
-	panel = NSGetAlertPanel("Loading...",
-		"Loading map. Please wait.",NULL,NULL,NULL);
+	panel = NSGetAlertPanel([NSString stringWithUTF8String:"Loading..."],
+		[NSString stringWithUTF8String:"Loading map. Please wait."],NULL,NULL,NULL);
 	[panel orderFront:NULL];
 
 	[quakeed_i doOpen:fname];
 
 	[panel performClose:NULL];
-	NSFreeAlertPanel(panel);
+	// NSFreeAlertPanel(panel);
 	return self;
 }
 
-
+- (void)selectRowInMatrix:(NSInteger)row {
+    if ([pis_wads_i isKindOfClass:[NSMatrix class]]) {
+        // NSMatrix: Select cell at given row, first column
+        [[pis_wads_i cellAtRow:row column:0] setState:NSControlStateValueOn];
+    } else if ([pis_wads_i isKindOfClass:[NSTableView class]]) {
+        // NSTableView: Select row in table view
+        [(NSTableView *)pis_wads_i selectRowIndexes:[NSIndexSet indexSetWithIndex:row]
+                             byExtendingSelection:NO];
+    } else {
+        NSLog(@"Unknown view type: %@", [pis_wads_i class]);
+    }
+}
 - setTextureWad: (char *)wf
 {
 	int		i, c;
@@ -263,10 +279,10 @@ id	project_i;
 	c = [wadList count];
 	for (i=0 ; i<c ; i++)
 	{
-		name = (char *)[wadList elementAt:i];
+		name = (char *)[wadList objectAtIndex:i];
 		if (!strcmp(name, wf))
 		{
-			[[pis_wads_i matrixInColumn:0] selectCellAt: i : 0];
+			[self selectRowInMatrix:i];
 			break;
 		}
 	}
@@ -293,7 +309,7 @@ id	project_i;
 	matrix = [sender matrixInColumn:0];
 	row = [matrix selectedRow];
 
-	name = (char *)[wadList elementAt:row];
+	name = (char *)[wadList objectAtIndex:row];
 	[self setTextureWad: name];
 	
 	return self;
@@ -311,9 +327,9 @@ id	project_i;
 	path = [preferences_i getProjectPath];
 	if (!path || !path[0] || access(path,0))
 	{
-		rtn = NSRunAlertPanel("Project Error!",
-			"A default project has not been found.\n"
-			, "Open Project", NULL, NULL);
+		rtn = NSRunAlertPanel([NSString stringWithUTF8String:"Project Error!"],
+			[NSString stringWithUTF8String:"A default project has not been found.\n"]
+			, [NSString stringWithUTF8String:"Open Project"], NULL, NULL);
 		if ([self openProject] == nil)
 			while (1)		// can't run without a project
 				[NSApp terminate: self];
@@ -365,19 +381,50 @@ id	project_i;
 	char	**filenames;
 	char	*dir;
 	
-	openpanel = [OpenPanel new];
-	[openpanel allowMultipleFiles:NO];
-	[openpanel chooseDirectories:NO];
-	rtn = [openpanel runModalForTypes:projtypes];
-	if (rtn == NS_OKTAG)
-	{
-		 (const char *const *)filenames = [openpanel filenames];
-		 dir = (char *)[openpanel directory];
-		 sprintf(path,"%s/%s",dir,filenames[0]);
-		 strcpy(path_projectinfo,path);
-		 [self openProjectFile:path];
-		 return self;
-	}
+	openpanel = [NSOpenPanel new];
+	[openpanel setAllowsMultipleSelection:NO];
+	[openpanel setCanChooseDirectories:NO];
+	// Assuming projtypes is a char** (C array of strings), you need to convert it to an NSArray of NSString objects.
+
+NSArray *allowedTypes = [NSMutableArray array]; // Initialize an empty array
+
+// If projtypes is a C array, convert it to an NSArray of NSString
+int i;
+for ( i = 0; projtypes[i] != NULL; i++) {
+    allowedTypes = [allowedTypes arrayByAddingObject:[NSString stringWithUTF8String:projtypes[i]]];
+}
+
+// Now you can pass the allowedTypes array to the panel method
+[openpanel setAllowedFileTypes:allowedTypes];
+
+// Run the panel
+ rtn = [openpanel runModal];
+
+	if (rtn == NSModalResponseOK) {
+    // Get the array of URLs (selected files)
+    NSArray *filenames = [openpanel URLs];
+    
+    // Get the directory as a C string
+    NSString *directory = [openpanel directory];
+    const char *dir = [directory UTF8String]; // Convert NSString to const char *
+    
+    // Assuming filenames[0] is a valid URL and you want to use the first file name
+    NSString *filePath = [[filenames firstObject] path]; // Convert the first URL to a file path
+    const char *filename = [filePath UTF8String]; // Convert NSString to const char *
+    
+    // Combine the directory and filename into the final path
+    char path[1024]; // Make sure the path is large enough for your needs
+    sprintf(path, "%s/%s", dir, filename);
+    
+    // Copy the combined path to path_projectinfo
+    strcpy(path_projectinfo, path);
+    
+    // Call your method to open the project file
+    [self openProjectFile:path];
+    
+    return self;
+}
+
 	
 	return nil;
 }
@@ -395,7 +442,7 @@ id	project_i;
 	max = [obj count];
 	for (i = 0;i < max; i++)
 	{
-		s = (char *)[obj elementAt:i];
+		s = (char *)[obj objectAtIndex:i];
 		if (!strcmp(s,str))
 			return 1;
 	}

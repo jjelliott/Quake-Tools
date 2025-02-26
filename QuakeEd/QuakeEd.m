@@ -45,7 +45,7 @@ AutoSave
 Every five minutes, save a modified map
 ===============
 */
-void AutoSave(DPSTimedEntry tag, double now, void *userData)
+void AutoSave()
 {
 // automatic backup
 	if (autodirty)
@@ -81,17 +81,17 @@ CheckCmdDone
 See if the BSP is done
 ===============
 */
-DPSTimedEntry	cmdte;
-void CheckCmdDone(DPSTimedEntry tag, double now, void *userData)
+
+void CheckCmdDone()
 {
-    union wait statusp;
-    struct rusage rusage;
+    // union wait statusp;
+    // struct rusage rusage;
 	
-	if (!wait4(bsppid, &statusp, WNOHANG, &rusage))
-		return;
+	// if (!wait4(bsppid, &statusp, WNOHANG, &rusage))
+	// 	return;
 	DisplayCmdOutput ();
 	bsppid = 0;
-	DPSRemoveTimedEntry( cmdte );	
+	// DPSRemoveTimedEntry( cmdte );	
 }
 
 //============================================================================
@@ -109,22 +109,24 @@ backing:(int)backingType
 buttonMask:(int)mask
 defer:(BOOL)flag
 {
-	[super initContent:contentRect
-		style:aStyle
-		backing:backingType
-		buttonMask:mask
-		defer:flag];
+	[super initWithContentRect:*contentRect
+                 styleMask:aStyle
+                   backing:backingType
+                     defer:flag];
 
-	[self addToEventMask:
-		NS_RMOUSEDRAGGEDMASK|NS_LMOUSEDRAGGEDMASK];	
+	// [self addToEventMask:
+	// 	NS_RMOUSEDRAGGEDMASK|NS_LMOUSEDRAGGEDMASK];	
 	
-    malloc_error(My_Malloc_Error);
+    // malloc_error(My_Malloc_Error);
 	
 	quakeed_i = self;
 	dirty = autodirty = NO;
 
-	DPSAddTimedEntry(5*60, AutoSave, self, NS_BASETHRESHOLD);
-
+	[NSTimer scheduledTimerWithTimeInterval: 5*60
+	target: self
+	selector: @selector(AutoSave)
+	userInfo:nil
+                                    repeats:YES];
 	upath = newUserPath ();
 
 	return self;
@@ -133,7 +135,7 @@ defer:(BOOL)flag
 - setDefaultFilename
 {	
 	strcpy (filename, FN_TEMPSAVE);
-	[self setTitleAsFilename:filename];
+	[self setTitle:[NSString stringWithUTF8String:filename]];
 	
 	return self;
 }
@@ -677,7 +679,12 @@ saveBSP
 	}
 	else
 	{
-		cmdte = DPSAddTimedEntry(1, CheckCmdDone, self, NS_BASETHRESHOLD);
+		cmdte = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(checkCmdDone)
+                                   userInfo:nil
+                                    repeats:NO];  // This will run only once after 1 second
+
 		if (! (bsppid = fork ()) )
 		{
 			system (expandedcmd);
@@ -827,7 +834,7 @@ saveAs
 	
 	strcpy (filename, [panel_i filename]);
 	
-	[self setTitleAsFilename:filename];
+	[self setTitle:filename];
 	
 	[self save: self];	
 	
